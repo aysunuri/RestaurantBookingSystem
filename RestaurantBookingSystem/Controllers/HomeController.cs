@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using RestaurantBookingSystem.Models;
+using RestaurantBookingSystem.ViewModels;
 
 namespace RestaurantBookingSystem.Controllers
 {

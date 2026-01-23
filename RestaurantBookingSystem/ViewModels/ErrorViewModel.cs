@@ -1,4 +1,4 @@
-namespace RestaurantBookingSystem.Models
+namespace RestaurantBookingSystem.ViewModels
 {
     public class ErrorViewModel
     {
