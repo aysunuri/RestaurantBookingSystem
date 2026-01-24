@@ -13,5 +13,8 @@
 
         public const int MinGuests = 1;
         public const int MaxGuests = 20;
+
+        public const int EmailMaxLength = 100;
+        public const string PhoneValidationRegex = @"^\+?[0-9]{8,15}$";
     }
 }

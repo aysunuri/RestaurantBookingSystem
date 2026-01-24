@@ -15,11 +15,14 @@ namespace RestaurantBookingSystem.Models
         public string FullName { get; set; } = null!;
 
         [Required]
-        [Phone]
+        [RegularExpression(PhoneValidationRegex)]
         public string PhoneNumber { get; set; } = null!;
 
+        [Required]
         [EmailAddress]
-        public string? Email { get; set; }
+        [MaxLength(EmailMaxLength)]
+        public string? Email { get; set; } = null!;
+
         public virtual ICollection<Reservation> Reservations { get; set; } 
             = new List<Reservation>();
     }
