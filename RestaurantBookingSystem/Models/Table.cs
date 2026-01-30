@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using static RestaurantBookingSystem.Common.EntityValidation;
+using static RestaurantBookingSystem.Common.ValidationConstants;
+
 
 namespace RestaurantBookingSystem.Models
 {
@@ -9,11 +10,9 @@ namespace RestaurantBookingSystem.Models
         public int Id { get; set; }
 
         [Required]
-        [Range(MinTableNumber, MaxTableNumber)]
         public int TableNumber { get; set; }
 
         [Required]
-        [Range(MinSeats,MaxSeats)]
         public int Seats { get; set; }
 
         public virtual ICollection<Reservation> Reservations { get; set; } 

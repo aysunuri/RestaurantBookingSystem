@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static RestaurantBookingSystem.Common.EntityValidation;
+using static RestaurantBookingSystem.Common.ValidationConstants;
 
 namespace RestaurantBookingSystem.Models
 {
@@ -16,8 +16,9 @@ namespace RestaurantBookingSystem.Models
         public TimeSpan Time { get; set; }
 
         [Required]
-        [Range(MinGuests, MaxGuests)]
         public int NumberOfGuests { get; set; }
+
+        [MaxLength(NotesMaxLength)]
         public string? Notes { get; set; }
 
         [Required]

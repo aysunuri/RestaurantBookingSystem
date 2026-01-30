@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using static RestaurantBookingSystem.Common.EntityValidation;
+using static RestaurantBookingSystem.Common.ValidationConstants;
 
 namespace RestaurantBookingSystem.Models
 {
@@ -10,16 +10,13 @@ namespace RestaurantBookingSystem.Models
         public int Id { get; set; }
 
         [Required]
-        [MinLength(CustomerFullNameMinLength)]
         [MaxLength(CustomerFullNameMaxLength)]
         public string FullName { get; set; } = null!;
 
         [Required]
-        [RegularExpression(PhoneValidationRegex)]
         public string PhoneNumber { get; set; } = null!;
 
         [Required]
-        [EmailAddress]
         [MaxLength(EmailMaxLength)]
         public string? Email { get; set; } = null!;
 
