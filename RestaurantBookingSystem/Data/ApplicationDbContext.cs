@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using RestaurantBookingSystem.Data.Configurations;
 using RestaurantBookingSystem.Models;
 
 namespace RestaurantBookingSystem.Data
@@ -13,6 +14,13 @@ namespace RestaurantBookingSystem.Data
         public virtual DbSet<Table> Tables { get; set; } = null!;
         public virtual DbSet<Customer> Customers { get; set; } = null!;
         public virtual DbSet<Reservation> Reservations { get; set; } = null!;
-        //Add fluent api
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder
+                .ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        }
+
     }
 }

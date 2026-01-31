@@ -1,0 +1,37 @@
+﻿@using RestaurantBookingSystem.ViewModels.Reservation
+@model IEnumerable<ReservationIndexViewModel>
+
+
+	<h2>Reservations</h2>
+    <a class="btn btn-primary" href="/Reservations/Create">Create New Reservation</a>
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Guests</th>
+            <th>Customer</th>
+            <th>Table</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (ReservationIndexViewModel r in Model)
+        {
+            <tr>
+                <td>@r.Date</td>
+                <td>@r.Time</td>
+                <td>@r.NumberOfGuests</td>
+                <td>@r.CustomerName</td>
+                <td>@r.TableNumber</td>
+                <td>
+                    <a class="btn btn-sm btn-info" href="/Reservations/Details/@r.Id">Details</a>
+                    <a class="btn btn-sm btn-warning" href="/Reservations/Edit/@r.Id">Edit</a>
+                    <a class="btn btn-sm btn-danger" href="/Reservations/Delete/@r.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
