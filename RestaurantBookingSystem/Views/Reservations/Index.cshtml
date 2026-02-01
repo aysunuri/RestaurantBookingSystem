@@ -2,8 +2,15 @@
 @model IEnumerable<ReservationIndexViewModel>
 
 
-	<h2>Reservations</h2>
-    <a class="btn btn-primary" href="/Reservations/Create">Create New Reservation</a>
+<h2 class="text-center mb-4">
+    <span class="title-container">Reservations</span>
+</h2>
+
+<div class="text-center mb-3">
+    <a class="btn btn-primary" href="/Reservations/Create">+ Add New Reservation</a>
+</div>
+
+<div class="soft-box">
 <table class="table table-striped mt-3">
     <thead>
         <tr>
@@ -33,5 +40,6 @@
         }
     </tbody>
 </table>
+</div>
 
 

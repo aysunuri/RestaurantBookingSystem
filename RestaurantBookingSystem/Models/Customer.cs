@@ -16,9 +16,8 @@ namespace RestaurantBookingSystem.Models
         [Required]
         public string PhoneNumber { get; set; } = null!;
 
-        [Required]
         [MaxLength(EmailMaxLength)]
-        public string? Email { get; set; } = null!;
+        public string? Email { get; set; }
 
         public virtual ICollection<Reservation> Reservations { get; set; } 
             = new List<Reservation>();
