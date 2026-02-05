@@ -6,7 +6,7 @@ namespace RestaurantBookingSystem.Data.Configurations
 {
     public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
     {
-        private readonly IEnumerable<Customer> Customers = new List<Customer>
+        private static readonly IEnumerable<Customer> Customers = new List<Customer>
         {
              new Customer { Id = 1, FullName = "John Doe", PhoneNumber = "0888123456", Email = "john@example.com" },
              new Customer { Id = 2, FullName = "Maria Ivanova", PhoneNumber = "0899123456", Email = "maria@example.com" }

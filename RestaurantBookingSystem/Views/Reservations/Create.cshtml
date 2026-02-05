@@ -1,0 +1,61 @@
+﻿@model ReservationFormViewModel
+
+<h2 class="text-center mb-4 page-title">Create Reservation</h2>
+
+<div class="soft-box" style="max-width: 700px; margin: 0 auto;">
+    <form asp-action="Create" method="post">
+
+        <div class="mb-3">
+            <label asp-for="Date" class="form-label"></label>
+            <input asp-for="Date" class="form-control" type="date" />
+            <span asp-validation-for="Date" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Time" class="form-label"></label>
+            <input asp-for="Time" class="form-control" type="time" />
+            <span asp-validation-for="Time" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="NumberOfGuests" class="form-label"></label>
+            <input asp-for="NumberOfGuests" class="form-control" type="number" min="1" max="20" />
+            <span asp-validation-for="NumberOfGuests" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="CustomerName" class="form-label"></label>
+            <input asp-for="CustomerName" class="form-control" />
+            <span asp-validation-for="CustomerName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="CustomerPhone" class="form-label"></label>
+            <input asp-for="CustomerPhone" class="form-control" />
+            <span asp-validation-for="CustomerPhone" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="CustomerEmail" class="form-label"></label>
+            <input asp-for="CustomerEmail" class="form-control" type="email" />
+            <span asp-validation-for="CustomerEmail" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="TableId" class="form-label"></label>
+            <select asp-for="TableId" asp-items="Model.Tables" class="form-select"></select>
+            <span asp-validation-for="TableId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Notes" class="form-label"></label>
+            <textarea asp-for="Notes" class="form-control"></textarea>
+            <span asp-validation-for="Notes" class="text-danger"></span>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary px-4">Create Reservation</button>
+        </div>
+    </form>
+</div>
+

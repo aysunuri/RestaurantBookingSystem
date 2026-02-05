@@ -6,7 +6,7 @@ namespace RestaurantBookingSystem.Data.Configurations
 {
     public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
     {
-        private readonly IEnumerable<Reservation> Reservations = new List<Reservation>
+        private static readonly IEnumerable<Reservation> Reservations = new List<Reservation>
         {
                 new Reservation
                 {
