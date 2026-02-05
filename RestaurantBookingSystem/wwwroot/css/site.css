@@ -47,6 +47,15 @@ body {
     border-radius: 12px;
     backdrop-filter: none;
 }
+
+.hero-section {
+    height: 60vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .card {
     color: #222;
 }

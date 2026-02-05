@@ -1,11 +1,14 @@
 ﻿@model ReservationFormViewModel
 
 <h2 class="text-center mb-4">
-    <span class="title-container">Create Reservation</span>
+    <span class="title-container">Edit Reservation</span>
 </h2>
 
 <div class="soft-box" style="max-width: 700px; margin: 0 auto;">
-    <form asp-action="Create" method="post">
+    <form asp-action="Edit" method="post">
+
+
+        <input type="hidden" asp-for="Id" />
 
         <div class="mb-3">
             <label asp-for="Date" class="form-label"></label>
@@ -56,8 +59,7 @@
         </div>
 
         <div class="text-center mt-3">
-            <button type="submit" class="btn btn-primary px-4">Create Reservation</button>
+            <button type="submit" class="btn btn-warning px-4">Save Changes</button>
         </div>
     </form>
 </div>
-

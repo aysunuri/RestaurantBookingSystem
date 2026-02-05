@@ -126,5 +126,74 @@ namespace RestaurantBookingSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            var reservation = await _context.Reservations
+                .Include(r => r.Customer)
+                .Include(r => r.Table)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (reservation == null)
+                return NotFound();
+
+            var model = new ReservationFormViewModel
+            {
+                Id = reservation.Id,
+                Date = reservation.Date,
+                Time = reservation.Time,
+                NumberOfGuests = reservation.NumberOfGuests,
+                Notes = reservation.Notes,
+                CustomerName = reservation.Customer.FullName,
+                CustomerPhone = reservation.Customer.PhoneNumber,
+                CustomerEmail = reservation.Customer.Email,
+                TableId = reservation.TableId,
+                Tables = await _context.Tables
+                 .Select(t => new SelectListItem
+                 {
+                       Value = t.Id.ToString(),
+                        Text = $"Table {t.TableNumber} - {t.Seats} seats"
+                 })
+                 .ToListAsync()
+            };
+
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, ReservationFormViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.Tables = await _context.Tables
+              .Select(t => new SelectListItem
+              {
+                  Value = t.Id.ToString(),
+                  Text = $"Table {t.TableNumber} - {t.Seats} seats"
+              })
+              .ToListAsync();
+
+                return View(model);
+            }
+            var reservation = await _context.Reservations
+               .Include(r => r.Customer)
+               .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (reservation == null)
+                return NotFound();
+
+            reservation.Customer.FullName = model.CustomerName;
+            reservation.Customer.PhoneNumber = model.CustomerPhone;
+            reservation.Customer.Email = model.CustomerEmail;
+            reservation.Date = model.Date;
+            reservation.Time = model.Time;
+            reservation.NumberOfGuests = model.NumberOfGuests;
+            reservation.Notes = model.Notes;
+            reservation.TableId = model.TableId;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

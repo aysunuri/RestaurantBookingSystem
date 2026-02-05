@@ -1,8 +1,46 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    var reservations = ViewBag.TodayReservations as List<RestaurantBookingSystem.Models.Reservation>;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="hero-small text-center text-white">
+    <h1 class="display-4 fw-bold mb-3">Restaurant Booking System</h1>
+    <p class="lead">Manage tables, customers, and reservations effortlessly.</p>
+
+    <div class="mt-4">
+        <a class="btn btn-primary btn-lg me-2" href="/Reservations/Create">Make Reservation</a>
+        <a class="btn btn-outline-light btn-lg" href="/Reservations">View All Reservations</a>
+    </div>
 </div>
+
+<div class="soft-box mt-5" style="max-width: 700px; margin: 0 auto;">
+    <h3 class="text-center mb-3">Today's Reservations</h3>
+
+    @if (reservations == null || !reservations.Any())
+    {
+        <p class="text-center text-muted mb-0">No reservations for today.</p>
+    }
+    else
+    {
+        <p class="text-center fw-bold">@reservations.Count reservation(s) today</p>
+
+        <ul class="list-group">
+            @foreach (var r in reservations)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>
+                        <strong>@r.Time.ToString(@"hh\:mm")</strong> – @r.Customer.FullName
+                    </span>
+                    <span class="text-muted">Table @r.Table.TableNumber</span>
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@if (!User.Identity.IsAuthenticated)
+{
+    <div class="text-center mt-5">
+        <a class="btn btn-light btn-lg" href="/Identity/Account/Login">Login to Continue</a>
+    </div>
+}
