@@ -22,18 +22,18 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (ReservationIndexViewModel r in Model)
+        @foreach (ReservationIndexViewModel res in Model)
         {
             <tr>
-                <td>@r.Date</td>
-                <td>@r.Time</td>
-                <td>@r.NumberOfGuests</td>
-                <td>@r.CustomerName</td>
-                <td>@r.TableNumber</td>
+                <td>@res.Date</td>
+                <td>@res.Time</td>
+                <td>@res.NumberOfGuests</td>
+                <td>@res.CustomerName</td>
+                <td>@res.TableNumber</td>
                 <td>
-                    <a class="btn btn-sm btn-info" href="/Reservations/Details/@r.Id">Details</a>
-                    <a class="btn btn-sm btn-warning" href="/Reservations/Edit/@r.Id">Edit</a>
-                    <a class="btn btn-sm btn-danger" href="/Reservations/Delete/@r.Id">Delete</a>
+                    <a class="btn btn-sm btn-info" href="/Reservations/Details/@res.Id">Details</a>
+                    <a class="btn btn-sm btn-warning" href="/Reservations/Edit/@res.Id">Edit</a>
+                    <a class="btn btn-sm btn-danger" href="/Reservations/Delete/@res.Id">Delete</a>
                 </td>
             </tr>
         }

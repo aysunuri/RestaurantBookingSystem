@@ -96,8 +96,11 @@ namespace RestaurantBookingSystem.Controllers
                 return View(model);
             }
 
+            //Cheking if the customer already exist in the Db
             var customer = await _context.Customers
                 .FirstOrDefaultAsync(c => c.PhoneNumber == model.CustomerPhone);
+
+            //If not, create a new customer
             if (customer == null)
             {
                 customer = new Customer
@@ -151,8 +154,8 @@ namespace RestaurantBookingSystem.Controllers
                 Tables = await _context.Tables
                  .Select(t => new SelectListItem
                  {
-                       Value = t.Id.ToString(),
-                        Text = $"Table {t.TableNumber} - {t.Seats} seats"
+                     Value = t.Id.ToString(),
+                     Text = $"Table {t.TableNumber} - {t.Seats} seats"
                  })
                  .ToListAsync()
             };
@@ -174,6 +177,7 @@ namespace RestaurantBookingSystem.Controllers
 
                 return View(model);
             }
+
             var reservation = await _context.Reservations
                .Include(r => r.Customer)
                .FirstOrDefaultAsync(r => r.Id == id);
@@ -195,5 +199,32 @@ namespace RestaurantBookingSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var reservation = await _context.Reservations
+                .Include(r => r.Customer)
+                .Include(r => r.Table)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (reservation == null)
+                return NotFound();
+
+            return View(reservation);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var reservation = await _context.Reservations.FindAsync(id);
+            if (reservation == null)
+                return NotFound();
+
+            _context.Reservations.Remove(reservation);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

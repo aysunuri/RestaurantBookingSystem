@@ -1,0 +1,33 @@
+﻿@model Reservation
+
+<h2 class="text-center mb-4">
+    <span class="title-container">Delete Reservation</span>
+</h2>
+
+<div class="soft-box" style="max-width: 700px; margin:0 auto;">
+    <h4 class="mb-4">Are you sure you want to delete this reservation?</h4>
+
+    <dl class="row">
+        <dt class="col-sm-3">Customer</dt>
+        <dd class="col-sm-9">@Model.Customer.FullName</dd>
+
+        <dt class="col-sm-3">Date</dt>
+        <dd class="col-sm-9">@Model.Date.ToShortDateString()</dd>
+
+        <dt class="col-sm-3">Time</dt>
+        <dd class="col-sm-9">@Model.Time.ToString(@"hh\:mm")</dd>
+
+        <dt class="col-sm-3">Table</dt>
+        <dd class="col-sm-9">Table @Model.Table.TableNumber</dd>
+
+        <dt class="col-sm-3">Guests</dt>
+        <dd class="col-sm-9">@Model.NumberOfGuests</dd>
+    </dl>
+
+    <form asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <button type="submit" class="btn btn-danger me-3">Confirm Delete</button>
+        <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+    </form>
+</div>
