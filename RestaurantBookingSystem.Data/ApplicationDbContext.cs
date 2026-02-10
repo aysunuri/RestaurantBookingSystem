@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RestaurantBookingSystem.Data.Configurations;
-using RestaurantBookingSystem.Models;
+using RestaurantBookingSystem.Data.Models;
+
 
 namespace RestaurantBookingSystem.Data
 {

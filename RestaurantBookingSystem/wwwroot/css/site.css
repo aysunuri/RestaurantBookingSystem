@@ -59,3 +59,13 @@ body {
 .card {
     color: #222;
 }
+
+.input-validation-error {
+    border: 1px solid #dc3545;
+    background-color: #ffe6e6;
+}
+
+.field-validation-error {
+    color: #dc3545;
+    font-size: 0.9rem;
+}

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using RestaurantBookingSystem.Models;
+using RestaurantBookingSystem.Data.Models;
 
 namespace RestaurantBookingSystem.Data.Configurations
 {

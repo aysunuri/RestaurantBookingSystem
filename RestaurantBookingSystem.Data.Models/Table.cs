@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using static RestaurantBookingSystem.Common.ValidationConstants;
 
 
-namespace RestaurantBookingSystem.Models
+namespace RestaurantBookingSystem.Data.Models
 {
     public class Table // physical table in the restaurant
     {

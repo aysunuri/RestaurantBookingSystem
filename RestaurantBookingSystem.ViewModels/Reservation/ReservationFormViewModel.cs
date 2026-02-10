@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel.DataAnnotations;
-using static RestaurantBookingSystem.Common.ValidationConstants;
+﻿using System.ComponentModel.DataAnnotations;
+using static RestaurantBookingSystem.GCommon.ValidationConstants;
+using static RestaurantBookingSystem.ViewModels.ValidationMessages.ReservationValidationMessages;
 
 namespace RestaurantBookingSystem.ViewModels.Reservation
 {
@@ -22,22 +22,22 @@ namespace RestaurantBookingSystem.ViewModels.Reservation
         public string? Notes { get; set; }
 
         [Required]
-        [MinLength(CustomerFullNameMinLength)]
-        [MaxLength(CustomerFullNameMaxLength)]
+        [MinLength(CustomerFullNameMinLength, ErrorMessage = NameTooShort)]
+        [MaxLength(CustomerFullNameMaxLength, ErrorMessage = NameTooLong)]
         public string CustomerName { get; set; } = null!;
 
         [Required]
-        [RegularExpression(PhoneValidationRegex)]
+        [RegularExpression(PhoneValidationRegex, ErrorMessage =InvalidPhone)]
         public string CustomerPhone { get; set; } = null!;
 
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = InvalidEmail)]
         [MaxLength(EmailMaxLength)]
         public string? CustomerEmail { get; set; }
 
         [Required]
         public int TableId { get; set; }
 
-        public IEnumerable<SelectListItem>? Tables { get; set; }
+        public IEnumerable<DropDownItemViewModel>? Tables { get; set; }
 
     }
 }

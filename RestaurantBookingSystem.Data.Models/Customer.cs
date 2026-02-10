@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using static RestaurantBookingSystem.Common.ValidationConstants;
+using static RestaurantBookingSystem.GCommon.ValidationConstants;
 
-namespace RestaurantBookingSystem.Models
+namespace RestaurantBookingSystem.Data.Models
 {
     public class Customer //represents the person who makes the reservation 
     {

@@ -1,4 +1,4 @@
-﻿namespace RestaurantBookingSystem.Common
+﻿namespace RestaurantBookingSystem.GCommon
 {
     public static class ValidationConstants
     {

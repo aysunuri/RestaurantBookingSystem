@@ -1,6 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
-    var reservations = ViewBag.TodayReservations as List<RestaurantBookingSystem.Models.Reservation>;
+    var reservations = ViewBag.TodayReservations as List<RestaurantBookingSystem.Data.Models.Reservation>;
 }
 
 <div class="hero-small text-center text-white">
@@ -9,7 +9,7 @@
 
     <div class="mt-4">
         <a class="btn btn-primary btn-lg me-2" href="/Reservations/Create">Make Reservation</a>
-        <a class="btn btn-outline-light btn-lg" href="/Reservations">View All Reservations</a>
+        <a class="btn btn btn-light btn-lg" href="/Reservations">View All Reservations</a>
     </div>
 </div>
 

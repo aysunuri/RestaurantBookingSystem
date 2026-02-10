@@ -1,4 +1,4 @@
-﻿@model Reservation
+﻿@model ReservationDetailsViewModel
 
 <h2 class="text-center mb-4">
     <span class="title-container">Delete Reservation</span>
@@ -9,16 +9,16 @@
 
     <dl class="row">
         <dt class="col-sm-3">Customer</dt>
-        <dd class="col-sm-9">@Model.Customer.FullName</dd>
+        <dd class="col-sm-9">@Model.CustomerName</dd>
 
         <dt class="col-sm-3">Date</dt>
-        <dd class="col-sm-9">@Model.Date.ToShortDateString()</dd>
+        <dd class="col-sm-9">@Model.Date</dd>
 
         <dt class="col-sm-3">Time</dt>
-        <dd class="col-sm-9">@Model.Time.ToString(@"hh\:mm")</dd>
+        <dd class="col-sm-9">@Model.Time</dd>
 
         <dt class="col-sm-3">Table</dt>
-        <dd class="col-sm-9">Table @Model.Table.TableNumber</dd>
+        <dd class="col-sm-9">Table @Model.TableNumber</dd>
 
         <dt class="col-sm-3">Guests</dt>
         <dd class="col-sm-9">@Model.NumberOfGuests</dd>

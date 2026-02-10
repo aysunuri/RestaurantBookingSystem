@@ -1,82 +1,37 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using RestaurantBookingSystem.Data;
-using RestaurantBookingSystem.Models;
+using RestaurantBookingSystem.Services.Contracts;
 using RestaurantBookingSystem.ViewModels.Reservation;
-
 
 namespace RestaurantBookingSystem.Controllers
 {
     public class ReservationsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        public ReservationsController(ApplicationDbContext context)
+        private readonly IReservationService _reservationService;
+        public ReservationsController(IReservationService reservationService)
         {
-            this._context = context;
+            _reservationService = reservationService;
         }
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var reservations = await _context.Reservations
-                .Include(r => r.Customer)
-                .Include(r => r.Table)
-                .ToListAsync();
-
-            var model = reservations.Select(r => new ReservationIndexViewModel
-            {
-                Id = r.Id,
-                Date = r.Date.ToShortDateString(),
-                Time = r.Time.ToString(@"hh\:mm"),
-                NumberOfGuests = r.NumberOfGuests,
-                CustomerName = r.Customer.FullName,
-                TableNumber = r.Table.TableNumber
-            }).ToList();
-
-            return View(model);
+          var model =await _reservationService.GetAllReservationsAsync();   
+          return View(model);
         }
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var reservation = await _context.Reservations
-                .Include(r => r.Customer)
-                .Include(r => r.Table)
-                .FirstOrDefaultAsync(r => r.Id == id);
+            var model = await _reservationService.GetReservationDetailsAsync(id);
 
-            if (reservation == null)
-            {
-                return NotFound();
-            }
-
-            var model = new ReservationDetailsViewModel
-            {
-                Id = reservation.Id,
-                Date = reservation.Date.ToShortDateString(),
-                Time = reservation.Time.ToString(@"hh\:mm"),
-                NumberOfGuests = reservation.NumberOfGuests,
-                Notes = reservation.Notes,
-                CustomerName = reservation.Customer.FullName,
-                CustomerPhone = reservation.Customer.PhoneNumber,
-                CustomerEmail = reservation.Customer.Email,
-                TableNumber = reservation.Table.TableNumber,
-                TableSeats = reservation.Table.Seats
-            };
-
+            if (model== null)
+             return NotFound();
+            
             return View(model);
         }
+
+        [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var model = new ReservationFormViewModel()
-            {
-                Date = DateTime.Today,
-                Tables = await _context.Tables
-                .Select(t => new SelectListItem
-                {
-                    Value = t.Id.ToString(),
-                    Text = $"Table {t.TableNumber} - {t.Seats} seats"
-                })
-                .ToListAsync()
-            };
+            var model = await _reservationService.GetReservationFormModelAsync(0); // id = 0 is a new reservation
             return View(model);
         }
 
@@ -85,144 +40,76 @@ namespace RestaurantBookingSystem.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model.Tables = await _context.Tables
-              .Select(t => new SelectListItem
-              {
-                  Value = t.Id.ToString(),
-                  Text = $"Table {t.TableNumber} - {t.Seats} seats"
-              })
-              .ToListAsync();
-
+                model.Tables = await _reservationService.GetTablesDropDownAsync();
                 return View(model);
             }
 
-            //Cheking if the customer already exist in the Db
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(c => c.PhoneNumber == model.CustomerPhone);
-
-            //If not, create a new customer
-            if (customer == null)
+            try
             {
-                customer = new Customer
-                {
-                    FullName = model.CustomerName,
-                    PhoneNumber = model.CustomerPhone,
-                    Email = model.CustomerEmail
-                };
-
-                _context.Customers.Add(customer);
-                await _context.SaveChangesAsync();
+                await _reservationService.AddReservationAsync(model);
+                return RedirectToAction(nameof(Index));
             }
-
-            var reservation = new Reservation
+            catch (InvalidOperationException ex)
             {
-                Date = model.Date,
-                Time = model.Time,
-                NumberOfGuests = model.NumberOfGuests,
-                Notes = model.Notes,
-                CustomerId = customer.Id,
-                TableId = model.TableId
-            };
-
-            _context.Reservations.Add(reservation);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", ex.Message);
+                model.Tables = await _reservationService.GetTablesDropDownAsync();
+                return View(model);
+            }
         }
-
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var reservation = await _context.Reservations
-                .Include(r => r.Customer)
-                .Include(r => r.Table)
-                .FirstOrDefaultAsync(r => r.Id == id);
+            var model = await _reservationService.GetReservationForEditAsync(id);
 
-            if (reservation == null)
+            if (model == null)
                 return NotFound();
-
-            var model = new ReservationFormViewModel
-            {
-                Id = reservation.Id,
-                Date = reservation.Date,
-                Time = reservation.Time,
-                NumberOfGuests = reservation.NumberOfGuests,
-                Notes = reservation.Notes,
-                CustomerName = reservation.Customer.FullName,
-                CustomerPhone = reservation.Customer.PhoneNumber,
-                CustomerEmail = reservation.Customer.Email,
-                TableId = reservation.TableId,
-                Tables = await _context.Tables
-                 .Select(t => new SelectListItem
-                 {
-                     Value = t.Id.ToString(),
-                     Text = $"Table {t.TableNumber} - {t.Seats} seats"
-                 })
-                 .ToListAsync()
-            };
 
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, ReservationFormViewModel model)
+        public async Task<IActionResult> Edit(ReservationFormViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                model.Tables = await _context.Tables
-              .Select(t => new SelectListItem
-              {
-                  Value = t.Id.ToString(),
-                  Text = $"Table {t.TableNumber} - {t.Seats} seats"
-              })
-              .ToListAsync();
-
+                model.Tables = await _reservationService.GetTablesDropDownAsync();
                 return View(model);
             }
+            try
+            {
+                var success = await _reservationService.EditReservationAsync(model);
 
-            var reservation = await _context.Reservations
-               .Include(r => r.Customer)
-               .FirstOrDefaultAsync(r => r.Id == id);
+                if (!success)
+                    return NotFound();
 
-            if (reservation == null)
-                return NotFound();
-
-            reservation.Customer.FullName = model.CustomerName;
-            reservation.Customer.PhoneNumber = model.CustomerPhone;
-            reservation.Customer.Email = model.CustomerEmail;
-            reservation.Date = model.Date;
-            reservation.Time = model.Time;
-            reservation.NumberOfGuests = model.NumberOfGuests;
-            reservation.Notes = model.Notes;
-            reservation.TableId = model.TableId;
-
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                model.Tables = await _reservationService.GetTablesDropDownAsync();
+                return View(model);
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var reservation = await _context.Reservations
-                .Include(r => r.Customer)
-                .Include(r => r.Table)
-                .FirstOrDefaultAsync(r => r.Id == id);
+            var model = await _reservationService.GetReservationDetailsAsync(id);
 
-            if (reservation == null)
+            if (model == null)
                 return NotFound();
 
-            return View(reservation);
+            return View(model);
         }
 
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var reservation = await _context.Reservations.FindAsync(id);
-            if (reservation == null)
-                return NotFound();
+            var success = await _reservationService.DeleteReservationAsync(id);
 
-            _context.Reservations.Remove(reservation);
-            await _context.SaveChangesAsync();
+            if(!success)
+                return NotFound();
 
             return RedirectToAction(nameof(Index));
         }

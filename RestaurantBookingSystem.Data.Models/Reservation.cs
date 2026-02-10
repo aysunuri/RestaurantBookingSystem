@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static RestaurantBookingSystem.Common.ValidationConstants;
+using static RestaurantBookingSystem.GCommon.ValidationConstants;
 
-namespace RestaurantBookingSystem.Models
+namespace RestaurantBookingSystem.Data.Models
 {
     public class Reservation
     {

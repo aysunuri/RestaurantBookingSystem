@@ -48,7 +48,7 @@
 
         <div class="mb-3">
             <label asp-for="TableId" class="form-label"></label>
-            <select asp-for="TableId" asp-items="Model.Tables" class="form-select"></select>
+            <select asp-for="TableId" asp-items="@(new SelectList(Model.Tables, "Value", "Text"))" class="form-select"></select>
             <span asp-validation-for="TableId" class="text-danger"></span>
         </div>
 

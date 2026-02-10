@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RestaurantBookingSystem.Data;
+using RestaurantBookingSystem.Services;
+using RestaurantBookingSystem.Services.Contracts;
 
 namespace RestaurantBookingSystem
 {
@@ -19,6 +21,8 @@ namespace RestaurantBookingSystem
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<IReservationService, ReservationService>();
 
             var app = builder.Build();
 
