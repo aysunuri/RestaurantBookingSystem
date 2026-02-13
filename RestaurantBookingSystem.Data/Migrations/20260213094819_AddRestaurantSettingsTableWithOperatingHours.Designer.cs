@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestaurantBookingSystem.Data;
 
@@ -11,9 +12,11 @@ using RestaurantBookingSystem.Data;
 namespace RestaurantBookingSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260213094819_AddRestaurantSettingsTableWithOperatingHours")]
+    partial class AddRestaurantSettingsTableWithOperatingHours
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -263,62 +266,6 @@ namespace RestaurantBookingSystem.Data.Migrations
                             Email = "maria@example.com",
                             FullName = "Maria Ivanova",
                             PhoneNumber = "0899123456"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Email = "michael@example.com",
-                            FullName = "Michael Brown",
-                            PhoneNumber = "0896343527"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Email = "sarah@example.com",
-                            FullName = "Sarah Davis",
-                            PhoneNumber = "0876524259"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Email = "daniel@example.com",
-                            FullName = "Daniel Green",
-                            PhoneNumber = "086789212"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Email = "emma@example.com",
-                            FullName = "Emma Wilson",
-                            PhoneNumber = "0897645432"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Email = "oliver@example.com",
-                            FullName = "Oliver King",
-                            PhoneNumber = "0896565743"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Email = "sophia@example.com",
-                            FullName = "Sophia Turner",
-                            PhoneNumber = "0885431326"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Email = "james@example.com",
-                            FullName = "James Hall",
-                            PhoneNumber = "0886574393"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Email = "ava@example.com",
-                            FullName = "Ava Scott",
-                            PhoneNumber = "0887675743"
                         });
                 });
 
@@ -377,86 +324,6 @@ namespace RestaurantBookingSystem.Data.Migrations
                             NumberOfGuests = 4,
                             TableId = 1,
                             Time = new TimeSpan(0, 12, 30, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CustomerId = 3,
-                            Date = new DateTime(2026, 2, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Notes = "Anniversary",
-                            NumberOfGuests = 3,
-                            TableId = 3,
-                            Time = new TimeSpan(0, 18, 0, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CustomerId = 4,
-                            Date = new DateTime(2026, 2, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Notes = "Date night",
-                            NumberOfGuests = 2,
-                            TableId = 4,
-                            Time = new TimeSpan(0, 20, 0, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CustomerId = 5,
-                            Date = new DateTime(2026, 2, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Notes = "Business lunch",
-                            NumberOfGuests = 5,
-                            TableId = 3,
-                            Time = new TimeSpan(0, 13, 0, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CustomerId = 6,
-                            Date = new DateTime(2026, 2, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Notes = "Early dinner",
-                            NumberOfGuests = 2,
-                            TableId = 1,
-                            Time = new TimeSpan(0, 17, 30, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CustomerId = 7,
-                            Date = new DateTime(2026, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Notes = "Friends gathering",
-                            NumberOfGuests = 6,
-                            TableId = 5,
-                            Time = new TimeSpan(0, 21, 0, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 8,
-                            CustomerId = 8,
-                            Date = new DateTime(2026, 2, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Notes = "Valentine's Day",
-                            NumberOfGuests = 2,
-                            TableId = 4,
-                            Time = new TimeSpan(0, 19, 30, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 9,
-                            CustomerId = 9,
-                            Date = new DateTime(2026, 2, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Notes = "Casual lunch",
-                            NumberOfGuests = 3,
-                            TableId = 2,
-                            Time = new TimeSpan(0, 12, 0, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 10,
-                            CustomerId = 10,
-                            Date = new DateTime(2026, 2, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Notes = "Double date",
-                            NumberOfGuests = 4,
-                            TableId = 1,
-                            Time = new TimeSpan(0, 18, 45, 0, 0)
                         });
                 });
 

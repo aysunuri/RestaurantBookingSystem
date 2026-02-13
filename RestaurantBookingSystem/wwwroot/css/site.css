@@ -17,13 +17,17 @@ html {
   min-height: 100%;
 }
 
-body {
+/*body {
   margin-bottom: 60px;
-}
+}*/
 
 body {
     background: url('/images/restaurantBackground.png') no-repeat center center fixed;
     background-size: cover;
+}
+
+body, html, h1, h2, h3, h4, h5, h6, p, a, span, input, button {
+    font-family: 'Montserrat', sans-serif;
 }
 
 .overlay {
@@ -69,3 +73,70 @@ body {
     color: #dc3545;
     font-size: 0.9rem;
 }
+
+.navbar-warm {
+    background: linear-gradient(90deg, #5c3b00, #b47a2a, #e0a85a);
+}
+.navbar-warm .nav-link,
+.navbar-warm .navbar-brand {
+    color: #fff !important;
+}
+.navbar-warm .nav-link:hover {
+    color: #f9e3c6 !important;
+}
+
+.nav-link {
+    color: rgba(255,255,255,0.9) !important;
+    transition: all 0.3s;
+    border-radius: 6px;
+}
+
+    .nav-link:hover {
+        color: #fff !important;
+        background-color: rgba(255,255,255,0.15);
+    }
+
+    .nav-link.active {
+        color: #fff !important;
+        background-color: rgba(255,255,255,0.25);
+        font-weight: 600;
+    }
+.warm-gradient-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 3.2rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #5c3b00, #b47a2a, #e0a85a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.warm-gradient-subtitle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.25rem;
+    color: #fce4c0;
+}
+
+
+.footer-gradient {
+    background: linear-gradient(90deg, #4A2C2A, #8E5A2A, #D98C3C, #F2B56B);
+    color: white;
+    padding: 20px 0;
+}
+
+ .footer-gradient a {
+        color: #ffe9d6;
+        text-decoration: none;
+ }
+
+ .footer-gradient a:hover {
+            text-decoration: underline;
+ }
+
+.footer-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+}
+

@@ -4,32 +4,64 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - RestaurantBookingSystem</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/RestaurantBookingSystem.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-warm navbar-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">RestaurantBookingSystem</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+
+                <!-- Brand -->
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                    🍽 RestaurantBookingSystem
+                </a>
+
+                <!-- Mobile toggle -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <!-- Nav items -->
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-sm-0">
+
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link @IsActive("Home")" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door"></i> Home
+                            </a>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Reservations" asp-action="Index">Reservations</a>
+                            <a class="nav-link @IsActive("Reservations")" asp-controller="Reservations" asp-action="Index">
+                                <i class="bi bi-calendar-check"></i> Reservations
+                            </a>
                         </li>
+
                     </ul>
+
+                    <!-- Login area -->
                     <partial name="_LoginPartial" />
+
                 </div>
             </div>
         </nav>
+
+        @functions {
+            // Automatically highlights the active page
+            string IsActive(string controller)
+            {
+                return ViewContext.RouteData.Values["Controller"]!.ToString() == controller
+                ? "active fw-semibold text-primary"
+                : "text-dark";
+            }
+        }
+
     </header>
 
     <div class="overlay">
@@ -40,11 +72,13 @@
     </div>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="footer-gradient text-center mt-auto py-3">
         <div class="container">
-            &copy; 2026 - RestaurantBookingSystem 
+            <span class="footer-text d-block">&copy; @DateTime.Now.Year - Restaurant Booking System</span>
+            <span class="footer-text d-block">Built for efficient table and reservation management.</span>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

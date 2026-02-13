@@ -12,9 +12,10 @@ namespace RestaurantBookingSystem.Controllers
             _reservationService = reservationService;
         }
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool showAll = false)
         {
-          var model =await _reservationService.GetAllReservationsAsync();   
+          var model =await _reservationService.GetAllReservationsAsync(showAll);   
+          ViewBag.ShowAll = showAll;
           return View(model);
         }
         [HttpGet]
@@ -102,7 +103,7 @@ namespace RestaurantBookingSystem.Controllers
             return View(model);
         }
 
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("DeleteConfirmed")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

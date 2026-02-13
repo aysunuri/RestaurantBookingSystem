@@ -14,14 +14,23 @@ namespace RestaurantBookingSystem.Services
         {
             _context = context;
         }
-        public async Task<IEnumerable<ReservationIndexViewModel>> GetAllReservationsAsync()
+        public async Task<IEnumerable<ReservationIndexViewModel>> GetAllReservationsAsync(bool includeOld = false)
         {
-            var reservations = await _context.Reservations
+            var query = _context.Reservations
                 .Include(r => r.Customer)
                 .Include(r => r.Table)
+                .AsQueryable();
+            if (!includeOld)
+            {
+                var cutOffDate = DateTime.Today.AddDays(-7);
+                query = query.Where(r => r.Date >= cutOffDate);
+            }
+            var reservations = await query
+                .OrderBy(r => r.Date)
+                .ThenBy(r=> r.Time)
                 .ToListAsync();
 
-            return  reservations.Select(r => new ReservationIndexViewModel
+            return reservations.Select(r => new ReservationIndexViewModel
             {
                 Id = r.Id,
                 Date = r.Date.ToShortDateString(),
@@ -73,13 +82,13 @@ namespace RestaurantBookingSystem.Services
                 };
             }
 
-          var reservation = await _context.Reservations
-                .Include(r => r.Customer)
-                .FirstOrDefaultAsync(r => r.Id == id);
+            var reservation = await _context.Reservations
+                  .Include(r => r.Customer)
+                  .FirstOrDefaultAsync(r => r.Id == id);
 
-            if(reservation == null)
-               return null;
-            
+            if (reservation == null)
+                return null;
+
 
             return new ReservationFormViewModel
             {
@@ -100,7 +109,17 @@ namespace RestaurantBookingSystem.Services
 
         public async Task AddReservationAsync(ReservationFormViewModel model)
         {
-            if(!await TableHasEnoughSeatsAsync(model.TableId, model.NumberOfGuests))
+            if (!IsValidReservationDateTime(model.Date, model.Time))
+            {
+                throw new InvalidOperationException("Cannot create reservations for past dates or times.");
+            }
+            if (!await IsWithinOperatingHoursAsync(model.Time))
+            {
+                var settings = await _context.RestaurantSettings.FirstOrDefaultAsync();
+                throw new InvalidOperationException(
+                $"Reservation time must be between {settings.OpeningHour:hh\\:mm} and {settings.ClosingHour:hh\\:mm}.");
+            }
+            if (!await TableHasEnoughSeatsAsync(model.TableId, model.NumberOfGuests))
             {
                 throw new InvalidOperationException("The selected table doesn't have enough seats for the number of guests.");
             }
@@ -176,7 +195,7 @@ namespace RestaurantBookingSystem.Services
 
         public async Task<bool> EditReservationAsync(ReservationFormViewModel model)
         {
-         
+
             var reservation = await _context.Reservations
                .Include(r => r.Customer)
                .FirstOrDefaultAsync(r => r.Id == model.Id);
@@ -184,6 +203,16 @@ namespace RestaurantBookingSystem.Services
             if (reservation == null)
                 return false;
 
+            if (!IsValidReservationDateTime(model.Date, model.Time))
+            {
+                throw new InvalidOperationException("Cannot create reservations for past dates or times.");
+            }
+            if (!await IsWithinOperatingHoursAsync(model.Time))
+            {
+                var settings = await _context.RestaurantSettings.FirstOrDefaultAsync();
+                throw new InvalidOperationException(
+                $"Reservation time must be between {settings.OpeningHour:hh\\:mm} and {settings.ClosingHour:hh\\:mm}.");
+            }
             if (!await TableHasEnoughSeatsAsync(model.TableId, model.NumberOfGuests))
             {
                 throw new InvalidOperationException("The selected table doesn't have enough seats for the number of guests.");
@@ -266,8 +295,8 @@ namespace RestaurantBookingSystem.Services
 
         public async Task<bool> TableHasEnoughSeatsAsync(int tableId, int guests)
         {
-           var table = await _context.Tables
-                .FirstOrDefaultAsync(t => t.Id == tableId);
+            var table = await _context.Tables
+                 .FirstOrDefaultAsync(t => t.Id == tableId);
 
             if (table == null)
                 return false;
@@ -281,16 +310,32 @@ namespace RestaurantBookingSystem.Services
             var start = time;
             var end = time.Add(duration);
 
-            return !await _context.Reservations
-           .AnyAsync(r =>
+            var reservations = await _context.Reservations
+           .Where(r =>
                r.TableId == tableId &&
                r.Date.Date == date.Date &&
-               (!ignoreReservationId.HasValue || r.Id != ignoreReservationId.Value) &&
-               // overlap check
-               r.Time < end &&
-               r.Time.Add(duration) > start
-           );
+               (!ignoreReservationId.HasValue || r.Id != ignoreReservationId.Value))
+               .Select(r => r.Time)
+               .ToListAsync();
+
+            var hasConflict = reservations.Any(reservationTime =>
+               reservationTime < end && reservationTime.Add(duration) > start
+             );
+
+            return !hasConflict;
         }
 
+        public async Task<bool> IsWithinOperatingHoursAsync(TimeSpan time)
+        {
+            var settings = await _context.RestaurantSettings.FirstOrDefaultAsync();
+            if (settings == null) return true;
+            return time >= settings.OpeningHour && time <= settings.ClosingHour;
+        }
+
+        public bool IsValidReservationDateTime(DateTime date, TimeSpan time)
+        {
+            var reservationDateTime =  date.Date.Add(time);
+            return reservationDateTime > DateTime.Now;
+        }
     }
 }

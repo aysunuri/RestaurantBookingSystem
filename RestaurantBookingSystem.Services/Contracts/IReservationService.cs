@@ -10,7 +10,7 @@ namespace RestaurantBookingSystem.Services.Contracts
 {
     public interface IReservationService
     {
-        Task<IEnumerable<ReservationIndexViewModel>> GetAllReservationsAsync();
+        Task<IEnumerable<ReservationIndexViewModel>> GetAllReservationsAsync(bool includeOld = false);
         Task<ReservationDetailsViewModel?> GetReservationDetailsAsync(int id);
 
         Task<ReservationFormViewModel?> GetReservationFormModelAsync(int id);
@@ -24,6 +24,9 @@ namespace RestaurantBookingSystem.Services.Contracts
         Task<IEnumerable<ReservationIndexViewModel>> GetTodayReservationsAsync();
         Task<IEnumerable<DropDownItemViewModel>> GetTablesDropDownAsync();
 
+
+        bool IsValidReservationDateTime(DateTime date, TimeSpan time);
+        Task<bool> IsWithinOperatingHoursAsync(TimeSpan time);
         Task<bool> TableHasEnoughSeatsAsync(int tableId, int guests);
         Task<bool> TableIsAvailableAsync (int tableId, DateTime date, TimeSpan time, int? ignoreReservationId = null);
 

@@ -1,44 +1,65 @@
 ﻿@model IEnumerable<ReservationIndexViewModel>
-
-
 <h2 class="text-center mb-4">
     <span class="title-container">Reservations</span>
 </h2>
 
 <div class="text-center mb-3">
-    <a class="btn btn-primary" href="/Reservations/Create">+ Add New Reservation</a>
+    <a class="btn btn-primary" asp-action="Create">+ Add New Reservation</a>
+
+    @if (ViewBag.ShowAll == true)
+    {
+        <a class="btn btn-secondary" asp-action="Index">
+            <i class="bi bi-filter"></i> Show Recent Only
+        </a>
+    }
+    else
+    {
+        <a class="btn btn-secondary" asp-action="Index" asp-route-showAll="true">
+            <i class="bi bi-clock-history"></i> Show All History
+        </a>
+    }
 </div>
+
+@if (ViewBag.ShowAll != true)
+{
+    <div class="alert alert-info text-center">
+        Showing reservations from the last 7 days and upcoming
+    </div>
+}
 
 <div class="soft-box">
-<table class="table table-striped mt-3">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Guests</th>
-            <th>Customer</th>
-            <th>Table</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (ReservationIndexViewModel res in Model)
-        {
+    <table class="table table-striped mt-3">
+        <thead>
             <tr>
-                <td>@res.Date</td>
-                <td>@res.Time</td>
-                <td>@res.NumberOfGuests</td>
-                <td>@res.CustomerName</td>
-                <td>@res.TableNumber</td>
-                <td>
-                    <a class="btn btn-sm btn-info" href="/Reservations/Details/@res.Id">Details</a>
-                    <a class="btn btn-sm btn-warning" href="/Reservations/Edit/@res.Id">Edit</a>
-                    <a class="btn btn-sm btn-danger" href="/Reservations/Delete/@res.Id">Delete</a>
-                </td>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Guests</th>
+                <th>Customer</th>
+                <th>Table</th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (ReservationIndexViewModel res in Model)
+            {
+                <tr>
+                    <td>@res.Date</td>
+                    <td>@res.Time</td>
+                    <td>@res.NumberOfGuests</td>
+                    <td>@res.CustomerName</td>
+                    <td>@res.TableNumber</td>
+                    <td>
+                        <a class="btn btn-sm btn-info" asp-action="Details" asp-route-id="@res.Id">Details</a>
+                        <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@res.Id">Edit</a>
+                        <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@res.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (!Model.Any())
+    {
+        <p class="text-center text-muted mt-4">No reservations found.</p>
+    }
 </div>
-
-

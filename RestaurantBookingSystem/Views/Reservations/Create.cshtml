@@ -17,6 +17,12 @@
             <label asp-for="Time" class="form-label"></label>
             <input asp-for="Time" class="form-control" type="time" />
             <span asp-validation-for="Time" class="text-danger"></span>
+            @if (ViewBag.OpeningTime != null)
+            {
+                <small class="text-muted">
+                    Restaurant hours: @ViewBag.OpeningTime - @ViewBag.ClosingTime
+                </small>
+            }
         </div>
 
         <div class="mb-3">
