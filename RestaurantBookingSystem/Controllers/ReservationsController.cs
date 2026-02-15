@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RestaurantBookingSystem.Services.Contracts;
 using RestaurantBookingSystem.ViewModels.Reservation;
 
 namespace RestaurantBookingSystem.Controllers
 {
+    [Authorize]
     public class ReservationsController : Controller
     {
         private readonly IReservationService _reservationService;

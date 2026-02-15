@@ -17,17 +17,14 @@
         <nav class="navbar navbar-expand-sm navbar-warm navbar-dark">
             <div class="container-fluid">
 
-                <!-- Brand -->
                 <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
                     🍽 RestaurantBookingSystem
                 </a>
 
-                <!-- Mobile toggle -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <!-- Nav items -->
                 <div class="collapse navbar-collapse" id="mainNavbar">
                     <ul class="navbar-nav me-auto mb-2 mb-sm-0">
 
@@ -45,7 +42,6 @@
 
                     </ul>
 
-                    <!-- Login area -->
                     <partial name="_LoginPartial" />
 
                 </div>
@@ -55,9 +51,8 @@
         @functions {
             string IsActive(string controller)
             {
-                return ViewContext.RouteData.Values["Controller"]!.ToString() == controller
-                ? "active"
-                : "";
+                var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+                return currentController == controller ? "active" : "";
             }
         }
 
