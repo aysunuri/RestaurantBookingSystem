@@ -36,7 +36,7 @@ namespace RestaurantBookingSystem.Data.Configurations
                      NumberOfGuests = 3,
                      Notes = "Anniversary",
                      CustomerId = 3,
-                     TableId = 3
+                     TableId = 11
                 },
              
                  new Reservation
@@ -57,7 +57,7 @@ namespace RestaurantBookingSystem.Data.Configurations
                      NumberOfGuests = 5,
                      Notes = "Business lunch",
                      CustomerId = 5,
-                     TableId = 3
+                     TableId = 6
                  },
 
                  new Reservation
@@ -88,7 +88,7 @@ namespace RestaurantBookingSystem.Data.Configurations
                      NumberOfGuests = 2,
                      Notes = "Valentine's Day",
                      CustomerId = 8,
-                     TableId = 4
+                     TableId = 1
                  },
                  new Reservation
                  {
@@ -108,7 +108,7 @@ namespace RestaurantBookingSystem.Data.Configurations
                      NumberOfGuests = 4,
                      Notes = "Double date",
                      CustomerId = 10,
-                     TableId = 1
+                     TableId = 4
                  }
 
 

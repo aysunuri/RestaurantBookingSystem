@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RestaurantBookingSystem.Data;
+using RestaurantBookingSystem.Services.Contracts;
 using RestaurantBookingSystem.ViewModels;
 using System.Diagnostics;
 
@@ -9,28 +10,19 @@ namespace RestaurantBookingSystem.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _context;
-
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext dbContext)
+        private readonly IReservationService _reservationService;
+        
+        public HomeController(ILogger<HomeController> logger, IReservationService reservationService)
         {
             _logger = logger;
-            _context = dbContext;
+            _reservationService = reservationService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var today = DateTime.Today;
+            var reservationsToday = await _reservationService.GetTodayReservationsAsync();
 
-            var reservationsToday = await _context.Reservations
-                .Include(r => r.Customer)
-                .Include(r => r.Table)
-                .Where(r => r.Date == today)
-                .OrderBy(r => r.Time)
-                .ToListAsync();
-
-            ViewBag.TodayReservations = reservationsToday; 
-
-            return View();
+            return View(reservationsToday);
         }
 
 

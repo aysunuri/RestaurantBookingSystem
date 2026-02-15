@@ -1,19 +1,25 @@
-﻿@{
+﻿@model IEnumerable<RestaurantBookingSystem.ViewModels.Reservation.ReservationIndexViewModel>
+
+@{
     ViewData["Title"] = "Home Page";
-    var reservations = ViewBag.TodayReservations as List<RestaurantBookingSystem.Data.Models.Reservation>;
+    var reservations = Model?.ToList();
 }
 
 <div class="hero-small text-center text-white">
-    <span class="title-container">
-    <h1 class="hero-title warm-gradient-title">Restaurant Booking System</h1> 
-    </span>
-    <p class="hero-subtitle warm-gradient-subtitle">
+    <div class="title-container">
+        <h1 class="hero-title">Restaurant Booking System</h1>
+    </div>
+    <p class="hero-subtitle">
         Manage tables, customers, and reservations effortlessly.
     </p>
 
     <div class="mt-4">
-        <a class="btn btn-primary btn-lg me-2" href="/Reservations/Create">Make Reservation</a>
-        <a class="btn btn-light btn-lg" href="/Reservations">View All Reservations</a>
+      <a class="btn btn-primary btn-lg" asp-action="Create" asp-controller="Reservations">
+    📅 Make Reservation
+</a>
+        <a class="btn btn-light btn-lg" asp-action="Index" asp-controller="Reservations">
+    📋 View All Reservations
+</a>
     </div>
 </div>
 
@@ -33,9 +39,10 @@
             {
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <span>
-                        <strong>@r.Time.ToString(@"hh\:mm")</strong> – @r.Customer.FullName
+                        <strong>@r.Time</strong>
+                        <span class="customer-name">@r.CustomerName</span>
                     </span>
-                    <span class="text-muted">Table @r.Table.TableNumber</span>
+                    <span class="badge bg-secondary">Table @r.TableNumber</span>
                 </li>
             }
         </ul>
@@ -44,7 +51,7 @@
 
 @if (!User.Identity.IsAuthenticated)
 {
-    <div class="text-center mt-5">
+    <div class="text-center mt-4">
         <a class="btn btn-light btn-lg" href="/Identity/Account/Login">Login to Continue</a>
     </div>
 }

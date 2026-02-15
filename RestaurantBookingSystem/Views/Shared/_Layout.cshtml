@@ -53,12 +53,11 @@
         </nav>
 
         @functions {
-            // Automatically highlights the active page
             string IsActive(string controller)
             {
                 return ViewContext.RouteData.Values["Controller"]!.ToString() == controller
-                ? "active fw-semibold text-primary"
-                : "text-dark";
+                ? "active"
+                : "";
             }
         }
 
