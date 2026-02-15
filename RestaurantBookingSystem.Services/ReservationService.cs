@@ -210,7 +210,10 @@ namespace RestaurantBookingSystem.Services
             if (customerChanged)
             {
                 var existingCustomer = await _context.Customers
-                    .FirstOrDefaultAsync(c => c.PhoneNumber == model.CustomerPhone);
+                  .FirstOrDefaultAsync(c => c.PhoneNumber == model.CustomerPhone &&
+                                        c.FullName == model.CustomerName &&
+                                        c.Email == model.CustomerEmail);
+
                 if (existingCustomer != null)
                 {
                     reservation.CustomerId = existingCustomer.Id;

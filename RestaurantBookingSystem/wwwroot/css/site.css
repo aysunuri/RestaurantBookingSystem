@@ -216,6 +216,46 @@ body, html, h1, h2, h3, h4, h5, h6, p, a, span, input, button {
     font-style: italic;
     font-size: 1.05rem;
 }
+/* Identity Pages Styling */
+.identity-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    max-width: 500px;
+    margin: 60px auto;
+}
+
+    .identity-container h1,
+    .identity-container h2,
+    .identity-container h4,
+    .identity-container label,
+    .identity-container p {
+        color: #2c1810 !important;
+    }
+
+    .identity-container .btn-primary {
+        background: linear-gradient(135deg, #D2691E 0%, #8B4513 100%);
+        border: none;
+        width: 100%;
+        padding: 12px;
+        font-weight: 600;
+    }
+
+        .identity-container .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(210, 105, 30, 0.4);
+        }
+
+    .identity-container a {
+        color: #D2691E;
+        font-weight: 600;
+    }
+
+        .identity-container a:hover {
+            color: #8B4513;
+            text-decoration: underline;
+        }
 
 /* Footer */
 .footer-gradient {

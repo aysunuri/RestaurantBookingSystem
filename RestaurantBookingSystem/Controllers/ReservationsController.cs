@@ -70,7 +70,7 @@ namespace RestaurantBookingSystem.Controllers
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(ReservationFormViewModel model)
+        public async Task<IActionResult> Edit(int id,ReservationFormViewModel model)
         {
             if (!ModelState.IsValid)
             {
