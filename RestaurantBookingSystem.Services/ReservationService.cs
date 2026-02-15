@@ -4,6 +4,7 @@ using RestaurantBookingSystem.Data.Models;
 using RestaurantBookingSystem.Services.Contracts;
 using RestaurantBookingSystem.ViewModels;
 using RestaurantBookingSystem.ViewModels.Reservation;
+using RestaurantBookingSystem.Mappers;
 
 namespace RestaurantBookingSystem.Services
 {
@@ -30,16 +31,7 @@ namespace RestaurantBookingSystem.Services
                 .ThenBy(r=> r.Time)
                 .ToListAsync();
 
-            return reservations.Select(r => new ReservationIndexViewModel
-            {
-                Id = r.Id,
-                Date = r.Date.ToShortDateString(),
-                Time = r.Time.ToString(@"hh\:mm"),
-                NumberOfGuests = r.NumberOfGuests,
-                CustomerName = r.Customer.FullName,
-                TableNumber = r.Table.TableNumber
-            })
-            .ToList();
+            return reservations.Select(ReservationMapper.ToIndexViewModel).ToList();
 
         }
         public async Task<ReservationDetailsViewModel?> GetReservationDetailsAsync(int id)
@@ -54,19 +46,7 @@ namespace RestaurantBookingSystem.Services
                 return null;
             }
 
-            return new ReservationDetailsViewModel
-            {
-                Id = reservation.Id,
-                Date = reservation.Date.ToShortDateString(),
-                Time = reservation.Time.ToString(@"hh\:mm"),
-                NumberOfGuests = reservation.NumberOfGuests,
-                Notes = reservation.Notes,
-                CustomerName = reservation.Customer.FullName,
-                CustomerPhone = reservation.Customer.PhoneNumber,
-                CustomerEmail = reservation.Customer.Email,
-                TableNumber = reservation.Table.TableNumber,
-                TableSeats = reservation.Table.Seats
-            };
+            return ReservationMapper.ToDetailsViewModel(reservation);
 
         }
         public async Task<ReservationFormViewModel?> GetReservationFormModelAsync(int id)
@@ -277,20 +257,13 @@ namespace RestaurantBookingSystem.Services
         {
             var today = DateTime.Today;
 
-            return await _context.Reservations
+            var reservations= await _context.Reservations
                 .Where(r => r.Date.Date == today)
                 .Include(r => r.Customer)
                 .Include(r => r.Table)
-                .Select(r => new ReservationIndexViewModel
-                {
-                    Id = r.Id,
-                    Date = r.Date.ToShortDateString(),
-                    Time = r.Time.ToString(@"hh\:mm"),
-                    NumberOfGuests = r.NumberOfGuests,
-                    CustomerName = r.Customer.FullName,
-                    TableNumber = r.Table.TableNumber
-                })
                 .ToListAsync();
+
+            return reservations.Select(ReservationMapper.ToIndexViewModel).ToList();
         }
 
         public async Task<bool> TableHasEnoughSeatsAsync(int tableId, int guests)
