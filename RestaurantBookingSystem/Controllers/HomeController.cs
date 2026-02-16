@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using RestaurantBookingSystem.Data;
 using RestaurantBookingSystem.Services.Contracts;
 using RestaurantBookingSystem.ViewModels;
 using System.Diagnostics;
@@ -11,12 +9,10 @@ namespace RestaurantBookingSystem.Controllers
     [AllowAnonymous]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly IReservationService _reservationService;
         
-        public HomeController(ILogger<HomeController> logger, IReservationService reservationService)
+        public HomeController(IReservationService reservationService)
         {
-            _logger = logger;
             _reservationService = reservationService;
         }
 

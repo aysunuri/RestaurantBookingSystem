@@ -1,6 +1,5 @@
-﻿using RestaurantBookingSystem.Data.Models;
+using RestaurantBookingSystem.Data.Models;
 using RestaurantBookingSystem.ViewModels.Reservation;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RestaurantBookingSystem.Mappers
 {
