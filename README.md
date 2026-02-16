@@ -135,6 +135,8 @@ RestaurantBookingSystem/ (Solution)
 │
 └── Solution Items/
     └── README.md                            # Project documentation
+    └── Screenshots
+    
 ```
 
 **Architecture:**
@@ -179,13 +181,13 @@ Using the application after launching it:
 ## 📸 Screenshots
 
 ### Home Page
-![Home Page](screenshots/home.png)
+![Home Page](Screenshots/home.png)
 
 ### Reservations
-![Reservations](screenshots/reservations.png)
+![Reservations](Screenshots/reservations.png)
 
 ### Create Reservation
-![Create Reservation](screenshots/create1.png)(screenshots/create2.png)
+![Create Reservation](Screenshots/create1.png)(screenshots/create2.png)
 
 ---
 
