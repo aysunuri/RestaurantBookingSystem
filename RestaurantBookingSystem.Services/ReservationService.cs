@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using RestaurantBookingSystem.Data;
 using RestaurantBookingSystem.Data.Models;
 using RestaurantBookingSystem.Services.Contracts;
@@ -97,7 +97,7 @@ namespace RestaurantBookingSystem.Services
             {
                 var settings = await _context.RestaurantSettings.FirstOrDefaultAsync();
                 throw new InvalidOperationException(
-                $"Reservation time must be between {settings.OpeningHour:hh\\:mm} and {settings.ClosingHour:hh\\:mm}.");
+               $"Invalid reservation time. Operating hours are {settings.OpeningHour:hh\\:mm} - {settings.ClosingHour:hh\\:mm}, last reservation accepted at {settings.ClosingHour - TimeSpan.FromHours(1):hh\\:mm}.");
             }
             if (!await TableHasEnoughSeatsAsync(model.TableId, model.NumberOfGuests))
             {
@@ -191,7 +191,7 @@ namespace RestaurantBookingSystem.Services
             {
                 var settings = await _context.RestaurantSettings.FirstOrDefaultAsync();
                 throw new InvalidOperationException(
-                $"Reservation time must be between {settings.OpeningHour:hh\\:mm} and {settings.ClosingHour:hh\\:mm}.");
+               $"Invalid reservation time. Operating hours are {settings.OpeningHour:hh\\:mm} - {settings.ClosingHour:hh\\:mm}, last reservation accepted at {settings.ClosingHour - TimeSpan.FromHours(1):hh\\:mm}.");
             }
             if (!await TableHasEnoughSeatsAsync(model.TableId, model.NumberOfGuests))
             {
@@ -305,7 +305,11 @@ namespace RestaurantBookingSystem.Services
         {
             var settings = await _context.RestaurantSettings.FirstOrDefaultAsync();
             if (settings == null) return true;
-            return time >= settings.OpeningHour && time <= settings.ClosingHour;
+
+            var minimumDiningTime = TimeSpan.FromHours(1);
+            var latestAllowedTime = settings.ClosingHour - minimumDiningTime;
+
+            return time >= settings.OpeningHour && time <= latestAllowedTime;
         }
 
         public bool IsValidReservationDateTime(DateTime date, TimeSpan time)
