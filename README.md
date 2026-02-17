@@ -1,6 +1,6 @@
 # 🍽️ Restaurant Booking System
 
-> A staff application for managing restaurant table reservations with table availability tracking and comprehensive validation.
+> An internal restaurant management system built for staff to create, manage, and track table reservations with built-in business rule validation.
 
 ![.NET Version](https://img.shields.io/badge/.NET-8.0-purple)
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-8.0-blue)
@@ -26,7 +26,7 @@
 
 ## 📖 About the Project
 
-This is a comprehensive restaurant table reservation management system built as part of the *ASP.NET Fundamentals* course at SoftUni. It provides restaurant staff with an efficient way to manage bookings, track table availability, and maintain customer information. The application features automatic validation with business rules, smart customer management, and a clean, responsive interface designed for daily restaurant operations.
+This is a comprehensive restaurant table reservation management system built as part of the *ASP.NET Fundamentals* course at SoftUni. It provides restaurant staff with an efficient way to manage bookings, track table availability, and handle customer information. The application features automatic validation with business rules, smart customer management, and a clean, responsive interface designed for daily restaurant operations.
 
 **Built for:** Restaurant staff who need a fast, reliable system to manage reservations without complex workflows or unnecessary features.
 
@@ -96,47 +96,50 @@ Navigate to `/Identity/Account/Register`, create your account, and log in to acc
 ---
 
 ## 📁 Project Structure
+## 📁 Project Structure
 ```
 RestaurantBookingSystem/ (Solution)
 │
-├── Data/                                    # Data Access Layer
+├── Data/                                         # Data Access Layer
 │   ├── RestaurantBookingSystem.Data/
-│   │   ├── Configurations/                  # Data seeding
-│   │   ├── Migrations/                      # Database migrations
-│   │   ├── Models/                          # Entity models
-│   │   └── ApplicationDbContext.cs          # DbContext
+│   │   ├── Configurations/                       # Data seeding
+│   │   ├── Migrations/                           # Database migrations
+│   │   ├── Models/                               # Entity models
+│   │   └── ApplicationDbContext.cs               # DbContext
 │   │
-│   └── RestaurantBookingSystem.ViewModels/  # Data Transfer Objects
-│       └── Reservation/                     # Reservation ViewModels
+│   └── RestaurantBookingSystem.Data.Models/      # Entity model definitions
 │
-├── Mappers/                                 # Mapping Layer
+├── Mappers/                                      # Mapping Layer
 │   └── RestaurantBookingSystem.Mappers/
-│       └── ReservationMapper.cs             # Entity-to-ViewModel conversions
+│       └── ReservationMapper.cs                  # Entity-to-ViewModel conversions
 │
-├── Services/                                # Business Logic Layer
+├── Services/                                     # Business Logic Layer
 │   └── RestaurantBookingSystem.Services/
-│       ├── Contracts/                       # Service interfaces
-│       └── ReservationService.cs            # Business logic implementation
+│       ├── Contracts/                            # Service interfaces
+│       └── ReservationService.cs                 # Business logic implementation
 │
-├── Web/                                     # Presentation Layer
-│   └── RestaurantBookingSystem/ (Web)
-│       ├── Controllers/                     # MVC Controllers
-│       ├── Views/                           # Razor Views
-│       │   ├── Home/
-│       │   ├── Reservations/
-│       │   └── Shared/                      # Layouts & partials
-│       ├── Areas/Identity/                  # ASP.NET Identity pages
-│       ├── wwwroot/                         # Static files (CSS, JS, images)
-│       ├── appsettings.json                 # Configuration
-│       └── Program.cs                       # Application entry point
+├── Web/                                          # Presentation Layer
+│   ├── RestaurantBookingSystem/ (Web)
+│   │   ├── Controllers/                          # MVC Controllers
+│   │   ├── Views/                                # Razor Views
+│   │   │   ├── Home/
+│   │   │   ├── Reservations/
+│   │   │   └── Shared/                           # Layouts & partials
+│   │   ├── Areas/Identity/                       # ASP.NET Identity pages
+│   │   ├── wwwroot/                              # Static files (CSS, JS, images)
+│   │   ├── appsettings.json                      # Configuration
+│   │   └── Program.cs                            # Application entry point
+│   │
+│   └── RestaurantBookingSystem.ViewModels/       # Data Transfer Objects
+│       └── Reservation/                          # Reservation ViewModels
 │
-├── RestaurantBookingSystem.GCommon/         # Global Constants
-│   └── ValidationConstants.cs               # Validation constants
+├── RestaurantBookingSystem.GCommon/              # Global Constants
+│   └── ValidationConstants.cs                    # Validation constants
+│
+├── Screenshots/                                  # README Screenshots
 │
 └── Solution Items/
-    └── README.md                            # Project documentation
-    └── Screenshots
-    
+    └── README.md                                 # Project documentation
 ```
 
 **Architecture:**
@@ -187,7 +190,8 @@ Using the application after launching it:
 ![Reservations](Screenshots/reservations.png)
 
 ### Create Reservation
-![Create Reservation](Screenshots/create1.png)(screenshots/create2.png)
+![Create Reservation](Screenshots/create1.png)
+![Create Reservation](Screenshots/create2.png)
 
 ---
 
