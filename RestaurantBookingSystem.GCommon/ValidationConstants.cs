@@ -1,4 +1,4 @@
-﻿namespace RestaurantBookingSystem.GCommon
+namespace RestaurantBookingSystem.GCommon
 {
     public static class ValidationConstants
     {
@@ -6,7 +6,7 @@
         public const int CustomerFullNameMaxLength = 100;
 
         public const int MinTableNumber = 1;
-        public const int MaxTableNumber = 20;
+        public const int MaxTableNumber = 999;
 
         public const int MinSeats = 1;
         public const int MaxSeats = 20;

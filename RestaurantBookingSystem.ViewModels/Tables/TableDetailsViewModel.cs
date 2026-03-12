@@ -9,6 +9,7 @@ namespace RestaurantBookingSystem.ViewModels.Tables
         public int Seats { get; set; }
         public int TodayReservationCount { get; set; }
         public int TotalReservations { get; set; }
+        public int FutureReservationCount { get; set; }
 
     }
 }

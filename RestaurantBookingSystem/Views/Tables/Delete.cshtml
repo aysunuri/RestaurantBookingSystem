@@ -1,0 +1,71 @@
+@model RestaurantBookingSystem.ViewModels.Tables.TableDetailsViewModel
+
+@{
+    ViewData["Title"] = "Delete Table";
+}
+
+<h2 class="text-center mb-4">
+    <span class="title-container text-danger">Delete Table</span>
+</h2>
+
+<div class="soft-box" style="max-width: 600px; margin: 0 auto;">
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <strong>Warning!</strong> Are you sure you want to delete this table?
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            <i class="bi bi-x-circle"></i> @TempData["Error"]
+        </div>
+    }
+
+    <dl class="row">
+        <dt class="col-sm-4">Table Number</dt>
+        <dd class="col-sm-8">
+            <strong class="text-primary">Table @Model.TableNumber</strong>
+        </dd>
+
+        <dt class="col-sm-4">Capacity</dt>
+        <dd class="col-sm-8">
+            <i class="bi bi-people-fill"></i> @Model.Seats seats
+        </dd>
+
+        <dt class="col-sm-4">Reservation History</dt>
+        <dd class="col-sm-8">
+            @if (Model.TotalReservations > 0)
+            {
+                <span class="badge bg-danger">@Model.TotalReservations reservation(s) in history</span>
+                <p class="text-danger mt-2">
+                    <small><i class="bi bi-info-circle"></i> Cannot delete tables with reservation history to preserve data integrity.</small>
+                </p>
+            }
+            else
+            {
+                <span class="badge bg-success">No reservation history - Safe to delete</span>
+            }
+        </dd>
+    </dl>
+
+    <form asp-action="Delete" method="post" class="mt-4">
+        <input type="hidden" asp-for="Id" />
+        <div class="text-center">
+            @if (Model.TotalReservations == 0)
+            {
+                <button type="submit" class="btn btn-danger px-4">
+                    <i class="bi bi-trash"></i> Yes, Delete
+                </button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-danger px-4" disabled>
+                    <i class="bi bi-trash"></i> Cannot Delete
+                </button>
+            }
+            <a class="btn btn-secondary px-4" asp-action="Index">
+                <i class="bi bi-x-circle"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>

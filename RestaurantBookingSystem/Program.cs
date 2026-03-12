@@ -26,6 +26,7 @@ namespace RestaurantBookingSystem
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddScoped<IReservationService, ReservationService>();
+            builder.Services.AddScoped<ITableService, TableService>();
 
             var app = builder.Build();
 

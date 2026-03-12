@@ -40,13 +40,17 @@ namespace RestaurantBookingSystem.Services
             int totalReservations = await _context.Reservations
                 .CountAsync(r => r.TableId == id);
 
+            int futureReservations = await _context.Reservations
+                .CountAsync(r => r.TableId == id && r.Date >= DateTime.Today);
+
             return new TableDetailsViewModel
             {
                 Id = table.Id,
                 TableNumber = table.TableNumber,
                 Seats = table.Seats,
                 TodayReservationCount = todayReservations,
-                TotalReservations = totalReservations
+                TotalReservations = totalReservations,
+                FutureReservationCount = futureReservations
             };
         }
         public async Task<TableFormViewModel?> GetTableFormModelAsync(int id)
@@ -116,7 +120,7 @@ namespace RestaurantBookingSystem.Services
 
             if (hasReservations)
             {
-                throw new InvalidOperationException("Cannot delete a table that has reservations. Please reassign or delete the reservations first.");
+                throw new InvalidOperationException("Cannot delete a table with reservation history. Historical data must be preserved.");
             }
 
             _context.Tables.Remove(table);

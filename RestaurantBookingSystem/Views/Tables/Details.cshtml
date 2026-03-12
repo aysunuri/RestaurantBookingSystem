@@ -1,0 +1,64 @@
+@model RestaurantBookingSystem.ViewModels.Tables.TableDetailsViewModel
+
+@{
+    ViewData["Title"] = $"Table {Model.TableNumber} Details";
+}
+
+<h2 class="text-center mb-4">
+    <span class="title-container">Table Details</span>
+</h2>
+
+<div class="soft-box" style="max-width: 600px; margin: 0 auto;">
+    <dl class="row">
+        <dt class="col-sm-4">Table Number</dt>
+        <dd class="col-sm-8">
+            <strong class="text-primary">Table @Model.TableNumber</strong>
+        </dd>
+
+        <dt class="col-sm-4">Capacity</dt>
+        <dd class="col-sm-8">
+            <i class="bi bi-people-fill"></i> @Model.Seats seats
+        </dd>
+
+        <dt class="col-sm-4">Today's Reservations</dt>
+        <dd class="col-sm-8">
+            @if (Model.TodayReservationCount > 0)
+            {
+                <span class="badge bg-success">@Model.TodayReservationCount booking(s) today</span>
+            }
+            else
+            {
+                <span class="badge bg-secondary">No bookings today</span>
+            }
+        </dd>
+
+        <dt class="col-sm-4">Upcoming Reservations</dt>
+        <dd class="col-sm-8">
+            @if (Model.FutureReservationCount > 0)
+            {
+                <span class="badge bg-warning">@Model.FutureReservationCount upcoming booking(s)</span>
+            }
+            else
+            {
+                <span class="badge bg-secondary">No upcoming bookings</span>
+            }
+        </dd>
+
+        <dt class="col-sm-4">All-Time Reservations</dt>
+        <dd class="col-sm-8">
+            <span class="badge bg-info">@Model.TotalReservations total booking(s)</span>
+        </dd>
+    </dl>
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model.Id">
+            <i class="bi bi-pencil"></i> Edit
+        </a>
+        <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model.Id">
+            <i class="bi bi-trash"></i> Delete
+        </a>
+        <a class="btn btn-primary" asp-action="Index">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>

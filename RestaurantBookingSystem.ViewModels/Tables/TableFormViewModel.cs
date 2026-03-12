@@ -13,7 +13,7 @@ namespace RestaurantBookingSystem.ViewModels.Tables
         public int TableNumber { get; set; }
 
         [Required(ErrorMessage = SeatsRequired)]
-        [Range(MinSeats, MaxSeats, ErrorMessage = SeatsRequired)]
+        [Range(MinSeats, MaxSeats, ErrorMessage = SeatsRange)]
         public int Seats { get; set; }
     }
 }
