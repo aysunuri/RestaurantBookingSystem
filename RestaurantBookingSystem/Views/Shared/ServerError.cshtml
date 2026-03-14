@@ -1,0 +1,30 @@
+@{
+    ViewData["Title"] = "Server Error";
+}
+
+<h2 class="text-center mb-4">
+    <span class="title-container text-danger">500 - Server Error</span>
+</h2>
+
+<div class="soft-box text-center" style="max-width: 700px; margin: 0 auto;">
+    <div class="mb-4">
+        <i class="bi bi-exclamation-octagon-fill text-danger" style="font-size: 4rem;"></i>
+    </div>
+
+    <p class="lead mb-3">
+        Something went wrong on our end.
+    </p>
+
+    <p class="text-muted mb-4">
+        Please try again later.
+    </p>
+
+    <div class="mt-4">
+        <a class="btn btn-primary px-4 me-2" href="javascript:history.back()">
+            <i class="bi bi-arrow-left"></i> Go Back
+        </a>
+        <a class="btn btn-secondary px-4" asp-controller="Home" asp-action="Index">
+            <i class="bi bi-house-door"></i> Go Home
+        </a>
+    </div>
+</div>
