@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RestaurantBookingSystem.Data.Models\RestaurantBookingSystem.Data.Models.csproj" />
     <ProjectReference Include="..\RestaurantBookingSystem.GCommon\RestaurantBookingSystem.GCommon.csproj" />
   </ItemGroup>
 
