@@ -12,6 +12,7 @@ namespace RestaurantBookingSystem.GCommon
         public const int MaxSeats = 20;
 
         public const int NotesMaxLength = 300;
+        public const int CustomerNotesMaxLength = 500;
 
         public const int MinGuests = 1;
         public const int MaxGuests = 20;

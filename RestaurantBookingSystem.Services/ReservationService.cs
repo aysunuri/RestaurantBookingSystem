@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using RestaurantBookingSystem.Data;
 using RestaurantBookingSystem.Data.Models;
+using RestaurantBookingSystem.Data.Models.Enums;
+using RestaurantBookingSystem.Mappers;
 using RestaurantBookingSystem.Services.Contracts;
 using RestaurantBookingSystem.ViewModels;
 using RestaurantBookingSystem.ViewModels.Reservation;
-using RestaurantBookingSystem.Mappers;
 
 namespace RestaurantBookingSystem.Services
 {
@@ -117,11 +118,19 @@ namespace RestaurantBookingSystem.Services
                 {
                     FullName = model.CustomerName,
                     PhoneNumber = model.CustomerPhone,
-                    Email = model.CustomerEmail
+                    Email = model.CustomerEmail,
+                    Status = CustomerStatus.Regular
                 };
 
                 _context.Customers.Add(customer);
                 await _context.SaveChangesAsync();
+            }
+            else
+            {
+                if (customer.Status == CustomerStatus.Blacklisted)
+                {
+                    throw new InvalidOperationException($"Cannot create reservation. Customer '{customer.FullName}' is blacklisted.");
+                }
             }
 
             var reservation = new Reservation
@@ -216,6 +225,10 @@ namespace RestaurantBookingSystem.Services
 
                 if (existingCustomer != null)
                 {
+                    if (existingCustomer.Status == CustomerStatus.Blacklisted)
+                    {
+                        throw new InvalidOperationException($"Cannot assign reservation to blacklisted customer '{existingCustomer.FullName}'.");
+                    }
                     reservation.CustomerId = existingCustomer.Id;
                 }
                 else
@@ -225,10 +238,18 @@ namespace RestaurantBookingSystem.Services
                         FullName = model.CustomerName,
                         PhoneNumber = model.CustomerPhone,
                         Email = model.CustomerEmail,
+                        Status = CustomerStatus.Regular
                     };
                     _context.Customers.Add(newCustomer);
                     await _context.SaveChangesAsync();
                     reservation.CustomerId = newCustomer.Id;
+                }
+            }
+            else
+            {
+                if (reservation.Customer.Status == CustomerStatus.Blacklisted)
+                {
+                    throw new InvalidOperationException($"Cannot edit reservation. Customer '{reservation.Customer.FullName}' is blacklisted.");
                 }
             }
 

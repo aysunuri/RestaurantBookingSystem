@@ -1,3 +1,4 @@
+using RestaurantBookingSystem.Data.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using static RestaurantBookingSystem.GCommon.ValidationConstants;
 
@@ -18,6 +19,11 @@ namespace RestaurantBookingSystem.Data.Models
 
         [MaxLength(EmailMaxLength)]
         public string? Email { get; set; }
+
+        public CustomerStatus Status { get; set; } = CustomerStatus.Regular;
+
+        [MaxLength(CustomerNotesMaxLength)]
+        public string? Notes { get; set; }
 
         public virtual ICollection<Reservation> Reservations { get; set; } 
             = new List<Reservation>();
