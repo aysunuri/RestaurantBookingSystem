@@ -1,0 +1,121 @@
+@model IEnumerable<RestaurantBookingSystem.ViewModels.Customer.CustomerIndexViewModel>
+
+@{
+    ViewData["Title"] = "Customers";
+}
+
+<h2 class="text-center mb-4">
+    <span class="title-container">Customer Database</span>
+</h2>
+
+<div class="soft-box">
+    <div class="mb-4">
+        <form asp-action="Index" method="get" class="row g-3">
+            <div class="col-md-10">
+                <input type="text" name="search" class="form-control"
+                       placeholder="Search by name, phone, or email..."
+                       value="@ViewData["CurrentSearch"]" />
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Search
+                </button>
+            </div>
+        </form>
+        @if (ViewData["CurrentSearch"] != null)
+        {
+            <div class="mt-2">
+                <a asp-action="Index" class="btn btn-sm btn-secondary">
+                    <i class="bi bi-x-circle"></i> Clear Search
+                </a>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            @if (ViewData["CurrentSearch"] != null)
+            {
+                <span>No customers found matching "@ViewData["CurrentSearch"]".</span>
+            }
+            else
+            {
+                <span>No customers in the database yet. Customers are created when making reservations.</span>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Total Reservations</th>
+                        <th>Last Reservation</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var customer in Model)
+                    {
+                        <tr>
+                            <td><strong>@customer.FullName</strong></td>
+                            <td>@customer.PhoneNumber</td>
+                            <td>@(customer.Email ?? "-")</td>
+                            <td>
+                                @switch (customer.Status)
+                                {
+                                    case RestaurantBookingSystem.Data.Models.Enums.CustomerStatus.VIP:
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-star-fill"></i> VIP
+                                        </span>
+                                        break;
+                                    case RestaurantBookingSystem.Data.Models.Enums.CustomerStatus.Blacklisted:
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle-fill"></i> Blacklisted
+                                        </span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-secondary">Regular</span>
+                                        break;
+                                }
+                            </td>
+                            <td>@customer.TotalReservations</td>
+                            <td>
+                                @if (customer.LastReservationDate.HasValue)
+                                {
+                                    @customer.LastReservationDate.Value.ToString("MMM dd, yyyy")
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                <a class="btn btn-sm btn-info" asp-action="Details" asp-route-id="@customer.Id">
+                                    <i class="bi bi-eye"></i> Details
+                                </a>
+                                <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@customer.Id">
+                                    <i class="bi bi-pencil"></i> Edit Status
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-3">
+            <p class="text-muted">
+                <i class="bi bi-info-circle"></i>
+                Total: <strong>@Model.Count()</strong> customers
+            </p>
+        </div>
+    }
+</div>

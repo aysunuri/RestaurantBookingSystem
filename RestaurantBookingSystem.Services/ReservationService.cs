@@ -223,12 +223,22 @@ namespace RestaurantBookingSystem.Services
                                         c.FullName == model.CustomerName &&
                                         c.Email == model.CustomerEmail);
 
+                if (existingCustomer == null)
+                {
+                    existingCustomer = await _context.Customers
+                        .FirstOrDefaultAsync(c => c.PhoneNumber == model.CustomerPhone);
+                }
+
                 if (existingCustomer != null)
                 {
                     if (existingCustomer.Status == CustomerStatus.Blacklisted)
                     {
                         throw new InvalidOperationException($"Cannot assign reservation to blacklisted customer '{existingCustomer.FullName}'.");
                     }
+
+                    existingCustomer.FullName = model.CustomerName;
+                    existingCustomer.Email = model.CustomerEmail;
+
                     reservation.CustomerId = existingCustomer.Id;
                 }
                 else
