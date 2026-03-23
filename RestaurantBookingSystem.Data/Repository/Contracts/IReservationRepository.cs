@@ -1,9 +1,4 @@
 using RestaurantBookingSystem.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RestaurantBookingSystem.Data.Repository.Contracts
 {
@@ -19,5 +14,6 @@ namespace RestaurantBookingSystem.Data.Repository.Contracts
         Task AddAsync(Reservation reservation);
         void Update(Reservation reservation);
         void Delete(Reservation reservation);
+        Task<int> SaveChangesAsync();
     }
 }

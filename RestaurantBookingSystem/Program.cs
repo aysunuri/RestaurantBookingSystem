@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RestaurantBookingSystem.Data;
+using RestaurantBookingSystem.Data.Repositories;
+using RestaurantBookingSystem.Data.Repository;
+using RestaurantBookingSystem.Data.Repository.Contracts;
 using RestaurantBookingSystem.Services;
 using RestaurantBookingSystem.Services.Contracts;
 
@@ -24,6 +27,10 @@ namespace RestaurantBookingSystem
             })
                .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<ITableRepository, TableRepository>();
 
             builder.Services.AddScoped<IReservationService, ReservationService>();
             builder.Services.AddScoped<ITableService, TableService>();

@@ -100,5 +100,9 @@ namespace RestaurantBookingSystem.Data.Repository
         {
             DbContext!.Reservations.Update(reservation);
         }
+        public new async Task<int> SaveChangesAsync()
+        {
+            return await base.SaveChangesAsync();
+        }
     }
 }

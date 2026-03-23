@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using RestaurantBookingSystem.Data;
 using RestaurantBookingSystem.Data.Models;
 using RestaurantBookingSystem.Data.Models.Enums;
+using RestaurantBookingSystem.Data.Repository.Contracts;
 using RestaurantBookingSystem.Mappers;
 using RestaurantBookingSystem.Services.Contracts;
 using RestaurantBookingSystem.ViewModels;
@@ -11,36 +12,38 @@ namespace RestaurantBookingSystem.Services
 {
     public class ReservationService : IReservationService
     {
-        private readonly ApplicationDbContext _context;
-        public ReservationService(ApplicationDbContext context)
+        private readonly IReservationRepository _reservationRepository;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly ITableRepository _tableRepository;
+
+        public ReservationService(
+            IReservationRepository reservationRepository,
+            ICustomerRepository customerRepository,
+            ITableRepository tableRepository)
         {
-            _context = context;
+            _reservationRepository = reservationRepository;
+            _customerRepository = customerRepository;
+            _tableRepository = tableRepository;
         }
         public async Task<IEnumerable<ReservationIndexViewModel>> GetAllReservationsAsync(bool includeOld = false)
         {
-            var query = _context.Reservations
-                .Include(r => r.Customer)
-                .Include(r => r.Table)
-                .AsQueryable();
-            if (!includeOld)
+            IEnumerable<Reservation> reservations;
+
+            if (includeOld)
             {
-                var cutOffDate = DateTime.Today.AddDays(-7);
-                query = query.Where(r => r.Date >= cutOffDate);
+                reservations = await _reservationRepository.GetAllWithDetailsAsync();
             }
-            var reservations = await query
-                .OrderBy(r => r.Date)
-                .ThenBy(r=> r.Time)
-                .ToListAsync();
+            else
+            {
+                reservations = await _reservationRepository.GetRecentReservationsAsync(7);
+            }
 
             return reservations.Select(ReservationMapper.ToIndexViewModel).ToList();
 
         }
         public async Task<ReservationDetailsViewModel?> GetReservationDetailsAsync(int id)
         {
-            var reservation = await _context.Reservations
-               .Include(r => r.Customer)
-               .Include(r => r.Table)
-               .FirstOrDefaultAsync(r => r.Id == id);
+            var reservation = await _reservationRepository.GetByIdWithDetailsAsync(id);
 
             if (reservation == null)
             {
@@ -63,9 +66,7 @@ namespace RestaurantBookingSystem.Services
                 };
             }
 
-            var reservation = await _context.Reservations
-                  .Include(r => r.Customer)
-                  .FirstOrDefaultAsync(r => r.Id == id);
+            var reservation = await _reservationRepository.GetByIdWithCustomerAsync(id);
 
             if (reservation == null)
                 return null;
@@ -96,9 +97,8 @@ namespace RestaurantBookingSystem.Services
             }
             if (!await IsWithinOperatingHoursAsync(model.Time))
             {
-                var settings = await _context.RestaurantSettings.FirstOrDefaultAsync();
                 throw new InvalidOperationException(
-               $"Invalid reservation time. Operating hours are {settings.OpeningHour:hh\\:mm} - {settings.ClosingHour:hh\\:mm}, last reservation accepted at {settings.ClosingHour - TimeSpan.FromHours(1):hh\\:mm}.");
+                    "Invalid reservation time. Operating hours are 10:00 - 23:00, last reservation accepted at 22:00.");
             }
             if (!await TableHasEnoughSeatsAsync(model.TableId, model.NumberOfGuests))
             {
@@ -109,8 +109,7 @@ namespace RestaurantBookingSystem.Services
                 throw new InvalidOperationException("The selected table is already booked for this time slot.");
             }
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(c => c.PhoneNumber == model.CustomerPhone);
+            var customer = await _customerRepository.GetByPhoneNumberAsync(model.CustomerPhone);
 
             if (customer == null)
             {
@@ -122,8 +121,8 @@ namespace RestaurantBookingSystem.Services
                     Status = CustomerStatus.Regular
                 };
 
-                _context.Customers.Add(customer);
-                await _context.SaveChangesAsync();
+                await _customerRepository.AddAsync(customer);
+                await _reservationRepository.SaveChangesAsync();
             }
             else
             {
@@ -143,26 +142,23 @@ namespace RestaurantBookingSystem.Services
                 TableId = model.TableId
             };
 
-            _context.Reservations.Add(reservation);
-            await _context.SaveChangesAsync();
+            await _reservationRepository.AddAsync(reservation); 
+            await _reservationRepository.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<DropDownItemViewModel>> GetTablesDropDownAsync()
         {
-            return await _context.Tables
-             .Select(t => new DropDownItemViewModel
+            var tables = await _tableRepository.GetAllAsync();
+            return tables.Select(t => new DropDownItemViewModel
              {
                  Value = t.Id,
                  Text = $"Table {t.TableNumber} - {t.Seats} seats"
              })
-            .ToListAsync();
+            .ToList();
         }
         public async Task<ReservationFormViewModel?> GetReservationForEditAsync(int id)
         {
-            var reservation = await _context.Reservations
-               .Include(r => r.Customer)
-               .Include(r => r.Table)
-               .FirstOrDefaultAsync(r => r.Id == id);
+            var reservation = await _reservationRepository.GetByIdWithDetailsAsync(id);
 
             if (reservation == null)
                 return null;
@@ -185,9 +181,7 @@ namespace RestaurantBookingSystem.Services
         public async Task<bool> EditReservationAsync(ReservationFormViewModel model)
         {
 
-            var reservation = await _context.Reservations
-               .Include(r => r.Customer)
-               .FirstOrDefaultAsync(r => r.Id == model.Id);
+            var reservation = await _reservationRepository.GetByIdWithCustomerAsync(model.Id!.Value);
 
             if (reservation == null)
                 return false;
@@ -198,9 +192,8 @@ namespace RestaurantBookingSystem.Services
             }
             if (!await IsWithinOperatingHoursAsync(model.Time))
             {
-                var settings = await _context.RestaurantSettings.FirstOrDefaultAsync();
                 throw new InvalidOperationException(
-               $"Invalid reservation time. Operating hours are {settings.OpeningHour:hh\\:mm} - {settings.ClosingHour:hh\\:mm}, last reservation accepted at {settings.ClosingHour - TimeSpan.FromHours(1):hh\\:mm}.");
+                   "Invalid reservation time. Operating hours are 10:00 - 23:00, last reservation accepted at 22:00.");
             }
             if (!await TableHasEnoughSeatsAsync(model.TableId, model.NumberOfGuests))
             {
@@ -218,15 +211,15 @@ namespace RestaurantBookingSystem.Services
 
             if (customerChanged)
             {
-                var existingCustomer = await _context.Customers
-                  .FirstOrDefaultAsync(c => c.PhoneNumber == model.CustomerPhone &&
-                                        c.FullName == model.CustomerName &&
-                                        c.Email == model.CustomerEmail);
+                var existingCustomer = await _customerRepository.GetByExactMatchAsync(
+                    model.CustomerName,
+                    model.CustomerPhone,
+                    model.CustomerEmail);
 
                 if (existingCustomer == null)
                 {
-                    existingCustomer = await _context.Customers
-                        .FirstOrDefaultAsync(c => c.PhoneNumber == model.CustomerPhone);
+                    existingCustomer = await _customerRepository
+                        .GetByPhoneNumberAsync(model.CustomerPhone);
                 }
 
                 if (existingCustomer != null)
@@ -239,6 +232,7 @@ namespace RestaurantBookingSystem.Services
                     existingCustomer.FullName = model.CustomerName;
                     existingCustomer.Email = model.CustomerEmail;
 
+                    _customerRepository.Update(existingCustomer);  
                     reservation.CustomerId = existingCustomer.Id;
                 }
                 else
@@ -250,8 +244,9 @@ namespace RestaurantBookingSystem.Services
                         Email = model.CustomerEmail,
                         Status = CustomerStatus.Regular
                     };
-                    _context.Customers.Add(newCustomer);
-                    await _context.SaveChangesAsync();
+
+                    await _customerRepository.AddAsync(newCustomer);
+                    await _reservationRepository.SaveChangesAsync();
                     reservation.CustomerId = newCustomer.Id;
                 }
             }
@@ -269,21 +264,21 @@ namespace RestaurantBookingSystem.Services
             reservation.Notes = model.Notes;
             reservation.TableId = model.TableId;
 
-            await _context.SaveChangesAsync();
+            _reservationRepository.Update(reservation);  
+            await _reservationRepository.SaveChangesAsync();
             return true;
         }
         public async Task<bool> DeleteReservationAsync(int id)
         {
-            var reservation = await _context.Reservations
-                .FirstOrDefaultAsync(r => r.Id == id);
+            var reservation = await _reservationRepository.GetByIdAsync(id);
 
             if (reservation == null)
                 return false;
 
-            _context.Reservations.Remove(reservation);
-            await _context.SaveChangesAsync();
+            _reservationRepository.Delete(reservation);
+            await _reservationRepository.SaveChangesAsync();
 
-            return true;
+            return true;  
         }
 
 
@@ -291,56 +286,30 @@ namespace RestaurantBookingSystem.Services
         {
             var today = DateTime.Today;
 
-            var reservations= await _context.Reservations
-                .Where(r => r.Date.Date == today)
-                .Include(r => r.Customer)
-                .Include(r => r.Table)
-                .ToListAsync();
+            var reservations = await _reservationRepository.GetTodayReservationsAsync();
 
             return reservations.Select(ReservationMapper.ToIndexViewModel).ToList();
         }
 
         public async Task<bool> TableHasEnoughSeatsAsync(int tableId, int guests)
         {
-            var table = await _context.Tables
-                 .FirstOrDefaultAsync(t => t.Id == tableId);
-
-            if (table == null)
-                return false;
-
-            return table.Seats >= guests;
+            return await _tableRepository.TableHasEnoughSeatsAsync(tableId, guests);
         }
 
         public async Task<bool> TableIsAvailableAsync(int tableId, DateTime date, TimeSpan time, int? ignoreReservationId = null)
         {
-            var duration = TimeSpan.FromHours(3);
-            var start = time;
-            var end = time.Add(duration);
-
-            var reservations = await _context.Reservations
-           .Where(r =>
-               r.TableId == tableId &&
-               r.Date.Date == date.Date &&
-               (!ignoreReservationId.HasValue || r.Id != ignoreReservationId.Value))
-               .Select(r => r.Time)
-               .ToListAsync();
-
-            var hasConflict = reservations.Any(reservationTime =>
-               reservationTime < end && reservationTime.Add(duration) > start
-             );
-
-            return !hasConflict;
+            return await _reservationRepository.IsTableAvailableAsync(tableId, date, time, ignoreReservationId);
         }
 
         public async Task<bool> IsWithinOperatingHoursAsync(TimeSpan time)
         {
-            var settings = await _context.RestaurantSettings.FirstOrDefaultAsync();
-            if (settings == null) return true;
-
+            // Hardcoded for now - will use SettingsRepository later
+            var openingHour = new TimeSpan(10, 0, 0);
+            var closingHour = new TimeSpan(23, 0, 0);
             var minimumDiningTime = TimeSpan.FromHours(1);
-            var latestAllowedTime = settings.ClosingHour - minimumDiningTime;
+            var latestAllowedTime = closingHour - minimumDiningTime;
 
-            return time >= settings.OpeningHour && time <= latestAllowedTime;
+            return time >= openingHour && time <= latestAllowedTime;
         }
 
         public bool IsValidReservationDateTime(DateTime date, TimeSpan time)
