@@ -31,6 +31,7 @@ namespace RestaurantBookingSystem
             builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<ITableRepository, TableRepository>();
+            builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
 
             builder.Services.AddScoped<IReservationService, ReservationService>();
             builder.Services.AddScoped<ITableService, TableService>();
