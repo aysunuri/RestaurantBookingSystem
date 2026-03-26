@@ -10,8 +10,8 @@ namespace RestaurantBookingSystem.Data.Repository.Contracts
         Task<bool> HasFutureReservationsAsync(int tableId);
         Task<int> GetTodayReservationCountAsync(int tableId);
         Task<int> GetTotalReservationCountAsync(int tableId);
+        Task<int> GetFutureReservationCountAsync(int tableId);
         Task<int> SaveChangesAsync();
-
         Task AddAsync(Table table);
         void Update(Table table);
         void Delete(Table table);

@@ -1,6 +1,5 @@
-using Microsoft.EntityFrameworkCore;
-using RestaurantBookingSystem.Data;
 using RestaurantBookingSystem.Data.Models;
+using RestaurantBookingSystem.Data.Repository.Contracts;
 using RestaurantBookingSystem.Services.Contracts;
 using RestaurantBookingSystem.ViewModels.Tables;
 
@@ -8,40 +7,34 @@ namespace RestaurantBookingSystem.Services
 {
     public class TableService : ITableService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ITableRepository _tableRepository;
 
-        public TableService(ApplicationDbContext context)
+        public TableService(ITableRepository tableRepository)
         {
-            _context = context;
+            _tableRepository = tableRepository;
         }
 
         public async Task<IEnumerable<TableIndexViewModel>> GetAllTablesAsync()
         {
-            return await _context.Tables
-           .OrderBy(t => t.TableNumber)
-           .Select(t => new TableIndexViewModel
-           {
-               Id = t.Id,
-               TableNumber = t.TableNumber,
-               Seats = t.Seats,
-           })
-           .ToListAsync();
+            var tables = await _tableRepository.GetAllAsync();
+
+            return tables.Select(t => new TableIndexViewModel
+            {
+                Id = t.Id,
+                TableNumber = t.TableNumber,
+                Seats = t.Seats
+            }).ToList();
         }
         public async Task<TableDetailsViewModel?> GetTableDetailsAsync(int id)
         {
-            var table = await _context.Tables.FindAsync(id);
+            var table = await _tableRepository.GetByIdAsync(id);
 
             if (table == null)
                 return null;
 
-            int todayReservations = await _context.Reservations
-                .CountAsync(r => r.TableId == id && r.Date.Date == DateTime.Today);
-
-            int totalReservations = await _context.Reservations
-                .CountAsync(r => r.TableId == id);
-
-            int futureReservations = await _context.Reservations
-                .CountAsync(r => r.TableId == id && r.Date >= DateTime.Today);
+            int todayReservations = await _tableRepository.GetTodayReservationCountAsync(id);
+            int totalReservations = await _tableRepository.GetTotalReservationCountAsync(id);
+            int futureReservations = await _tableRepository.GetFutureReservationCountAsync(id);
 
             return new TableDetailsViewModel
             {
@@ -60,7 +53,7 @@ namespace RestaurantBookingSystem.Services
                 return new TableFormViewModel();
             }
 
-            var table = await _context.Tables.FindAsync(id);
+            var table = await _tableRepository.GetByIdAsync(id);
 
             if (table == null)
                 return null;
@@ -85,14 +78,14 @@ namespace RestaurantBookingSystem.Services
                 Seats = model.Seats
             };
 
-            _context.Tables.Add(table);
-            await _context.SaveChangesAsync();
+            await _tableRepository.AddAsync(table);
+            await _tableRepository.SaveChangesAsync();
         }
 
 
         public async Task<bool> EditTableAsync(TableFormViewModel model)
         {
-            var table = await _context.Tables.FindAsync(model.Id);
+            var table = await _tableRepository.GetByIdAsync(model.Id!.Value);
 
             if (table == null)
                 return false;
@@ -105,39 +98,32 @@ namespace RestaurantBookingSystem.Services
             table.TableNumber = model.TableNumber;
             table.Seats = model.Seats;
 
-            await _context.SaveChangesAsync();
+            _tableRepository.Update(table);
+            await _tableRepository.SaveChangesAsync();
             return true;
         }
         public async Task<bool> DeleteTableAsync(int id)
         {
-            var table = await _context.Tables.FindAsync(id);
+            var table = await _tableRepository.GetByIdAsync(id);
 
             if (table == null)
                 return false;
 
-            var hasReservations = await _context.Reservations
-                .AnyAsync(r => r.TableId == id);
+            var hasReservations = await _tableRepository.HasFutureReservationsAsync(id);
 
             if (hasReservations)
             {
                 throw new InvalidOperationException("Cannot delete a table with reservation history. Historical data must be preserved.");
             }
 
-            _context.Tables.Remove(table);
-            await _context.SaveChangesAsync();
+            _tableRepository.Delete(table);
+            await _tableRepository.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> TableNumberExistsAsync(int tableNumber, int? excludeId = null)
         {
-            if (excludeId.HasValue)
-            {
-                return await _context.Tables
-                    .AnyAsync(t => t.TableNumber == tableNumber && t.Id != excludeId.Value);
-            }
-
-            return await _context.Tables
-                .AnyAsync(t => t.TableNumber == tableNumber);
+            return await _tableRepository.TableNumberExistsAsync(tableNumber, excludeId);
         }
     }
 }

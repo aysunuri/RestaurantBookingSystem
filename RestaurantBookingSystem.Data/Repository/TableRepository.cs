@@ -52,6 +52,11 @@ namespace RestaurantBookingSystem.Data.Repositories
             return await DbContext!.Reservations
                 .AnyAsync(r => r.TableId == tableId && r.Date >= DateTime.Today);
         }
+        public async Task<int> GetFutureReservationCountAsync(int tableId)
+        {
+            return await DbContext!.Reservations
+                .CountAsync(r => r.TableId == tableId && r.Date >= DateTime.Today);
+        }
 
         public async Task<int> GetTodayReservationCountAsync(int tableId)
         {
