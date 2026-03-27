@@ -19,5 +19,7 @@ namespace RestaurantBookingSystem.GCommon
 
         public const int EmailMaxLength = 100;
         public const string PhoneValidationRegex = @"^\+?[0-9]{8,15}$";
+
+        public const int RestaurantNameMax = 100;
     }
 }
