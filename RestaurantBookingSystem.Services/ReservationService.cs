@@ -7,6 +7,7 @@ using RestaurantBookingSystem.Mappers;
 using RestaurantBookingSystem.Services.Contracts;
 using RestaurantBookingSystem.ViewModels;
 using RestaurantBookingSystem.ViewModels.Reservation;
+using RestaurantBookingSystem.ViewModels.Shared;
 
 namespace RestaurantBookingSystem.Services
 {
@@ -289,7 +290,42 @@ namespace RestaurantBookingSystem.Services
 
             return true;  
         }
+        public async Task<PagedResult<ReservationIndexViewModel>> GetPagedReservationsAsync(
+     int page, int pageSize, bool showAll)
+        {
+            var query = _reservationRepository.GetAllWithIncludes()
+                .AsNoTracking();
 
+            if (!showAll)
+            {
+                var cutOff = DateTime.Today.AddDays(-7);
+                query = query.Where(r => r.Date >= cutOff);
+            }
+
+            var totalItems = await query.CountAsync();
+
+            var reservations = await query
+                .OrderBy(r => r.Date)
+                .ThenBy(r => r.Time)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<ReservationIndexViewModel>
+            {
+                Items = reservations.Select(r => new ReservationIndexViewModel
+                {
+                    Id = r.Id,
+                    Date = r.Date.ToString("dd.MM.yyyy"),
+                    Time = r.Time.ToString(@"hh\:mm"),
+                    NumberOfGuests = r.NumberOfGuests,
+                    CustomerName = r.Customer.FullName,
+                    TableNumber = r.Table.TableNumber
+                }).ToList(),
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling((double)totalItems / pageSize)
+            };
+        }
 
         public async Task<IEnumerable<ReservationIndexViewModel>> GetTodayReservationsAsync()
         {
@@ -328,5 +364,6 @@ namespace RestaurantBookingSystem.Services
             var reservationDateTime =  date.Date.Add(time);
             return reservationDateTime > DateTime.Now;
         }
+
     }
 }

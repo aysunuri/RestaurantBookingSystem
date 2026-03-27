@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantBookingSystem.Services.Contracts;
 using RestaurantBookingSystem.ViewModels.Reservation;
@@ -14,11 +14,15 @@ namespace RestaurantBookingSystem.Controllers
             _reservationService = reservationService;
         }
         [HttpGet]
-        public async Task<IActionResult> Index(bool showAll = false)
+        public async Task<IActionResult> Index(int page = 1, bool showAll = false)
         {
-          var model =await _reservationService.GetAllReservationsAsync(showAll);   
-          ViewBag.ShowAll = showAll;
-          return View(model);
+            int pageSize = 10;
+
+            var result = await _reservationService
+                .GetPagedReservationsAsync(page, pageSize, showAll);
+            ViewBag.ShowAll = showAll;
+
+            return View(result);
         }
         [HttpGet]
         public async Task<IActionResult> Details(int id)

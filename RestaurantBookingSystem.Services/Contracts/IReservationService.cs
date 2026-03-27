@@ -1,5 +1,7 @@
+using RestaurantBookingSystem.Data.Models;
 using RestaurantBookingSystem.ViewModels;
 using RestaurantBookingSystem.ViewModels.Reservation;
+using RestaurantBookingSystem.ViewModels.Shared;
 
 namespace RestaurantBookingSystem.Services.Contracts
 {
@@ -18,6 +20,7 @@ namespace RestaurantBookingSystem.Services.Contracts
 
         Task<IEnumerable<ReservationIndexViewModel>> GetTodayReservationsAsync();
         Task<IEnumerable<DropDownItemViewModel>> GetTablesDropDownAsync();
+        Task<PagedResult<ReservationIndexViewModel>> GetPagedReservationsAsync(int page, int pageSize, bool showAll);
 
 
         bool IsValidReservationDateTime(DateTime date, TimeSpan time);

@@ -95,6 +95,28 @@ namespace RestaurantBookingSystem.Data.Repository
 
             return !hasConflict;
         }
+        public async Task<List<Reservation>> GetPagedAsync(int page, int pageSize)
+        {
+            return await DbContext!.Reservations
+                .OrderBy(r => r.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+        public IQueryable<Reservation> GetQueryable()
+        {
+            return DbContext!.Reservations.AsQueryable();
+        }
+        public IQueryable<Reservation> GetAllWithIncludes()
+        {
+            return DbContext!.Reservations
+                .Include(r => r.Customer)
+                .Include(r => r.Table);
+        }
+        public async Task<int> CountAsync()
+        {
+            return await DbContext!.Reservations.CountAsync();
+        }
 
         public void Update(Reservation reservation)
         {
@@ -104,5 +126,6 @@ namespace RestaurantBookingSystem.Data.Repository
         {
             return await base.SaveChangesAsync();
         }
+
     }
 }
