@@ -9,15 +9,13 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/RestaurantBookingSystem.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
-
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-warm navbar-dark">
             <div class="container-fluid">
 
-                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
+                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
                     🍽 RestaurantBookingSystem
                 </a>
 
@@ -29,27 +27,34 @@
                     <ul class="navbar-nav me-auto mb-2 mb-sm-0">
 
                         <li class="nav-item">
-                            <a class="nav-link @IsActive("Home")" asp-controller="Home" asp-action="Index">
+                            <a class="nav-link @IsActive("Home")" asp-area="" asp-controller="Home" asp-action="Index">
                                 <i class="bi bi-house-door"></i> Home
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link @IsActive("Reservations")" asp-controller="Reservations" asp-action="Index">
+                            <a class="nav-link @IsActive("Reservations")" asp-area="" asp-controller="Reservations" asp-action="Index">
                                 <i class="bi bi-calendar-check"></i> Reservations
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @IsActive("Tables")" asp-controller="Tables" asp-action="Index">
+                            <a class="nav-link @IsActive("Tables")" asp-area="" asp-controller="Tables" asp-action="Index">
                                 <i class="bi bi-table"></i> Tables
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @IsActive("Customers")" asp-controller="Customers" asp-action="Index">
+                            <a class="nav-link @IsActive("Customers")" asp-area="" asp-controller="Customers" asp-action="Index">
                                 <i class="bi bi-people"></i> Customers
                             </a>
                         </li>
-
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="Settings" asp-action="Index">
+                                    <i class="bi bi-gear-fill"></i> Settings
+                                </a>
+                            </li>
+                        }
                     </ul>
 
                     <partial name="_LoginPartial" />
@@ -69,11 +74,11 @@
     </header>
 
     <div class="overlay">
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
     <footer class="footer-gradient text-center mt-auto py-3">

@@ -1,0 +1,61 @@
+@model RestaurantBookingSystem.ViewModels.Settings.SettingsViewModel
+
+@{
+    ViewData["Title"] = "Restaurant Settings";
+}
+
+<h2 class="text-center mb-4">
+    <span class="title-container">Restaurant Settings</span>
+</h2>
+
+<div class="soft-box" style="max-width: 700px; margin: 0 auto;">
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4 class="mb-3">General Information</h4>
+            <dl class="row">
+                <dt class="col-sm-5">Restaurant Name</dt>
+                <dd class="col-sm-7"><strong>@Model.RestaurantName</strong></dd>
+            </dl>
+        </div>
+
+        <div class="col-md-6">
+            <h4 class="mb-3">Operating Hours</h4>
+            <dl class="row">
+                <dt class="col-sm-5">Opening Hour</dt>
+                <dd class="col-sm-7">@Model.OpeningHour.ToString(@"hh\:mm")</dd>
+
+                <dt class="col-sm-5">Closing Hour</dt>
+                <dd class="col-sm-7">@Model.ClosingHour.ToString(@"hh\:mm")</dd>
+
+                <dt class="col-sm-5">Last Seating</dt>
+                <dd class="col-sm-7">
+                    @((Model.ClosingHour - TimeSpan.FromHours(1)).ToString(@"hh\:mm"))
+                    <small class="text-muted">(1 hour before closing)</small>
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <hr class="my-4" />
+
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        <strong>Note:</strong> Changing operating hours will affect reservation validation.
+        New reservations must be created within the specified hours.
+    </div>
+
+    <div class="text-center mt-4">
+        <a class="btn btn-warning px-4" asp-action="Edit">
+            <i class="bi bi-pencil"></i> Edit Settings
+        </a>
+    </div>
+</div>
