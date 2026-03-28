@@ -4,6 +4,7 @@ using RestaurantBookingSystem.Data;
 using RestaurantBookingSystem.Data.Repositories;
 using RestaurantBookingSystem.Data.Repository;
 using RestaurantBookingSystem.Data.Repository.Contracts;
+using RestaurantBookingSystem.Data.Seeders;
 using RestaurantBookingSystem.Services;
 using RestaurantBookingSystem.Services.Contracts;
 
@@ -25,6 +26,7 @@ namespace RestaurantBookingSystem
             {
                 ConfigureIdentity(options);
             })
+                .AddRoles<IdentityRole>()
                .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
@@ -60,6 +62,9 @@ namespace RestaurantBookingSystem
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // Seed roles and admin user
+            SeedDatabase(app);
+
             app.UseStatusCodePagesWithRedirects("Home/Error/{0}");
 
             app.MapControllerRoute(
@@ -87,6 +92,17 @@ namespace RestaurantBookingSystem
             options.Password.RequireNonAlphanumeric = false;
             options.Password.RequiredLength = 8;
             options.Password.RequiredUniqueChars = 0;
+        }
+        static void SeedDatabase(WebApplication app)
+        {
+            using var scope = app.Services.CreateScope();
+            var services = scope.ServiceProvider;
+
+            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+
+            RoleSeeder.SeedRolesAsync(roleManager).GetAwaiter().GetResult();
+            AdminSeeder.SeedAdminUserAsync(userManager, roleManager).GetAwaiter().GetResult();
         }
     }
 }
