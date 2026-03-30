@@ -28,6 +28,14 @@ namespace RestaurantBookingSystem
             })
                 .AddRoles<IdentityRole>()
                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login";
+                options.LogoutPath = "/Identity/Account/Logout";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+            });
+
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
@@ -65,7 +73,7 @@ namespace RestaurantBookingSystem
             // Seed roles and admin user
             SeedDatabase(app);
 
-            app.UseStatusCodePagesWithRedirects("Home/Error/{0}");
+            app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
 
             app.MapControllerRoute(
                 name: "admin",
@@ -74,6 +82,7 @@ namespace RestaurantBookingSystem
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
             app.MapRazorPages();
 
             app.Run();

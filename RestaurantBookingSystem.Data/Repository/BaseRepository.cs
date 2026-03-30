@@ -18,7 +18,7 @@ namespace RestaurantBookingSystem.Data.Repository
 
         protected ApplicationDbContext? DbContext => dbContext;
 
-        protected async Task<int> SaveChangesAsync()
+        public async Task<int> SaveChangesAsync()
         {
             return await DbContext!.SaveChangesAsync();
         }

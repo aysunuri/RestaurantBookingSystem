@@ -43,9 +43,14 @@ namespace RestaurantBookingSystem.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(SettingsViewModel model)
         {
+            Console.WriteLine($"=== EDIT POST ===");
+            Console.WriteLine($"Name: {model.RestaurantName}");
+            Console.WriteLine($"Opening: {model.OpeningHour}");
+            Console.WriteLine($"Closing: {model.ClosingHour}");
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -66,6 +71,7 @@ namespace RestaurantBookingSystem.Areas.Admin.Controllers
 
             TempData["Success"] = "Restaurant settings updated successfully.";
             return RedirectToAction(nameof(Index));
+
         }
     }
 }

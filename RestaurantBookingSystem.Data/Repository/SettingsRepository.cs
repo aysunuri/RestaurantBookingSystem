@@ -15,7 +15,6 @@ namespace RestaurantBookingSystem.Data.Repository
         {
             return await DbContext!.RestaurantSettings.FirstOrDefaultAsync();
         }
-
         public void Update(RestaurantSettings settings)
         {
             DbContext!.RestaurantSettings.Update(settings);

@@ -20,5 +20,26 @@ namespace RestaurantBookingSystem.ViewModels.Settings
         [Required(ErrorMessage = ClosingHourRequired)]
         [Display(Name = "Closing Hour")]
         public TimeSpan ClosingHour { get; set; }
+
+        public string OpeningHourInput
+        {
+            get => OpeningHour.ToString(@"hh\:mm");
+            set
+            {
+                if (TimeSpan.TryParse(value, out var result))
+                    OpeningHour = result;
+            }
+        }
+
+        public string ClosingHourInput
+        {
+            get => ClosingHour.ToString(@"hh\:mm");
+            set
+            {
+                if (TimeSpan.TryParse(value, out var result))
+                    ClosingHour = result;
+            }
+        }
+
     }
 }

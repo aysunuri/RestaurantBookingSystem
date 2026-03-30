@@ -1,0 +1,52 @@
+@model RestaurantBookingSystem.ViewModels.Settings.SettingsViewModel
+
+@{
+    ViewData["Title"] = "Edit Restaurant Settings";
+}
+
+<h2 class="text-center mb-4">
+    <span class="title-container">Edit Restaurant Settings</span>
+</h2>
+
+<div class="soft-box" style="max-width: 600px; margin: 0 auto;">
+    <form method="post">
+        <input type="hidden" name="Id" value="@Model.Id" />
+
+        <div class="mb-4">
+            <label class="form-label fw-bold">Restaurant Name</label>
+            <input name="RestaurantName" type="text" class="form-control" value="@Model.RestaurantName" required />
+        </div>
+
+        <hr class="my-4" />
+
+        <h5 class="mb-3"><i class="bi bi-clock"></i> Operating Hours</h5>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Opening Hour</label>
+            <input name="OpeningHourInput" type="time" class="form-control" value="@Model.OpeningHour.ToString(@"hh\:mm")" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Closing Hour</label>
+            <input name="ClosingHourInput" type="time" class="form-control" value="@Model.ClosingHour.ToString(@"hh\:mm")" required />
+        </div>
+
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            <strong>Note:</strong> Last reservation will be accepted 1 hour before closing time.
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-save"></i> Save Changes
+            </button>
+            <a class="btn btn-secondary px-4" href="/Admin/Settings">
+                <i class="bi bi-x-circle"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -41,7 +41,7 @@ namespace RestaurantBookingSystem.Services
             settings.ClosingHour = model.ClosingHour;
 
             _settingsRepository.Update(settings);
-            await _settingsRepository.SaveChangesAsync();
+            var result = await _settingsRepository.SaveChangesAsync();
 
             return true;
         }
