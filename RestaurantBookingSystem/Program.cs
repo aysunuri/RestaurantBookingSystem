@@ -33,7 +33,7 @@ namespace RestaurantBookingSystem
             {
                 options.LoginPath = "/Identity/Account/Login";
                 options.LogoutPath = "/Identity/Account/Logout";
-                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.AccessDeniedPath = "/Home/AccessDenied";
             });
 
             builder.Services.AddControllersWithViews();
@@ -74,6 +74,7 @@ namespace RestaurantBookingSystem
             SeedDatabase(app);
 
             app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
+
 
             app.MapControllerRoute(
                 name: "admin",

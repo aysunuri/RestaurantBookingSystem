@@ -47,6 +47,7 @@ namespace RestaurantBookingSystem.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var model = await _customerService.GetCustomerForEditAsync(id);
@@ -61,6 +62,7 @@ namespace RestaurantBookingSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, CustomerEditViewModel model)
         {
             if (id != model.Id)
