@@ -291,7 +291,7 @@ namespace RestaurantBookingSystem.Services
             return true;  
         }
         public async Task<PagedResult<ReservationIndexViewModel>> GetPagedReservationsAsync(
-     int page, int pageSize, bool showAll)
+         int page, int pageSize, bool showAll)
         {
             var query = _reservationRepository.GetAllWithIncludes()
                 .AsNoTracking();
@@ -323,7 +323,9 @@ namespace RestaurantBookingSystem.Services
                     TableNumber = r.Table.TableNumber
                 }).ToList(),
                 CurrentPage = page,
-                TotalPages = (int)Math.Ceiling((double)totalItems / pageSize)
+                TotalPages = (int)Math.Ceiling((double)totalItems / pageSize),
+                TotalItems = totalItems, 
+                PageSize = pageSize        
             };
         }
 

@@ -11,10 +11,7 @@ namespace RestaurantBookingSystem.Data.Repository.Contracts
         Task<Reservation?> GetByIdWithCustomerAsync(int id);
         Task<Reservation?> GetByIdAsync(int id);
         Task<bool> IsTableAvailableAsync(int tableId, DateTime date, TimeSpan time, int? ignoreReservationId = null);
-        Task<List<Reservation>> GetPagedAsync(int page, int pageSize);
-        IQueryable<Reservation> GetQueryable();
         IQueryable<Reservation> GetAllWithIncludes();
-        Task<int> CountAsync();
         Task AddAsync(Reservation reservation);
         void Update(Reservation reservation);
         void Delete(Reservation reservation);

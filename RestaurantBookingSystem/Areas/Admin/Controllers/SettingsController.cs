@@ -43,7 +43,7 @@ namespace RestaurantBookingSystem.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(SettingsViewModel model)
         {
             Console.WriteLine($"=== EDIT POST ===");
