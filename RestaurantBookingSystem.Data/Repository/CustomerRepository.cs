@@ -62,6 +62,11 @@ namespace RestaurantBookingSystem.Data.Repository
                 .OrderBy(c => c.FullName)
                 .ToListAsync();
         }
+        public IQueryable<Customer> GetAllWithIncludes()
+        {
+            return DbContext!.Customers
+                .Include(c => c.Reservations);
+        }
 
         public void Update(Customer customer)
         {

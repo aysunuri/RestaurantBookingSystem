@@ -16,21 +16,12 @@ namespace RestaurantBookingSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? search)
+        public async Task<IActionResult> Index(int page = 1, string? search = null)
         {
-            IEnumerable<CustomerIndexViewModel> customers;
-
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                customers = await _customerService.SearchCustomersAsync(search);
-                ViewData["CurrentSearch"] = search;
-            }
-            else
-            {
-                customers = await _customerService.GetAllCustomersAsync();
-            }
-
-            return View(customers);
+            int pageSize = 10;
+            var result = await _customerService.GetPagedCustomersAsync(page, pageSize, search);
+            ViewData["CurrentSearch"] = search;
+            return View(result);
         }
 
         [HttpGet]

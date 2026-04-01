@@ -1,4 +1,4 @@
-@model IEnumerable<RestaurantBookingSystem.ViewModels.Customer.CustomerIndexViewModel>
+@model PagedResult<CustomerIndexViewModel>
 
 @{
     ViewData["Title"] = "Customers";
@@ -32,7 +32,7 @@
         }
     </div>
 
-    @if (!Model.Any())
+    @if (!Model.Items.Any())
     {
         <div class="alert alert-info">
             <i class="bi bi-info-circle"></i>
@@ -42,7 +42,7 @@
             }
             else
             {
-                <span>No customers in the database yet. Customers are created when making reservations.</span>
+                <span>No customers in the database yet.</span>
             }
         </div>
     }
@@ -62,7 +62,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var customer in Model)
+                    @foreach (var customer in Model.Items)
                     {
                         <tr>
                             <td><strong>@customer.FullName</strong></td>
@@ -101,9 +101,12 @@
                                 <a class="btn btn-sm btn-info" asp-action="Details" asp-route-id="@customer.Id">
                                     <i class="bi bi-eye"></i> Details
                                 </a>
-                                <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@customer.Id">
-                                    <i class="bi bi-pencil"></i> Edit Status
-                                </a>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@customer.Id">
+                                        <i class="bi bi-pencil"></i> Edit Status
+                                    </a>
+                                }
                             </td>
                         </tr>
                     }
@@ -111,11 +114,6 @@
             </table>
         </div>
 
-        <div class="mt-3">
-            <p class="text-muted">
-                <i class="bi bi-info-circle"></i>
-                Total: <strong>@Model.Count()</strong> customers
-            </p>
-        </div>
+        <partial name="_Pagination" model="Model" />
     }
 </div>

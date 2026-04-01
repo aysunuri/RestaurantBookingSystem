@@ -1,4 +1,5 @@
 using RestaurantBookingSystem.ViewModels.Customer;
+using RestaurantBookingSystem.ViewModels.Shared;
 
 namespace RestaurantBookingSystem.Services.Contracts
 {
@@ -7,6 +8,7 @@ namespace RestaurantBookingSystem.Services.Contracts
         Task<IEnumerable<CustomerIndexViewModel>> GetAllCustomersAsync();
 
         Task<IEnumerable<CustomerIndexViewModel>> SearchCustomersAsync(string searchTerm);
+        Task<PagedResult<CustomerIndexViewModel>> GetPagedCustomersAsync(int page, int pageSize, string? searchTerm = null);
 
         Task<CustomerDetailsViewModel?> GetCustomerDetailsAsync(int id);
 

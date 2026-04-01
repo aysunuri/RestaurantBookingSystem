@@ -6,6 +6,7 @@ namespace RestaurantBookingSystem.Data.Repository.Contracts
     {
         Task<IEnumerable<Customer>> GetAllAsync();
         Task<IEnumerable<Customer>> SearchAsync(string searchTerm);
+        IQueryable<Customer> GetAllWithIncludes();
         Task<Customer?> GetByIdAsync(int id);
         Task<Customer?> GetByIdWithReservationsAsync(int id);
         Task<Customer?> GetByPhoneNumberAsync(string phoneNumber);

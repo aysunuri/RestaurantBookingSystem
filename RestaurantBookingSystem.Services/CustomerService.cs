@@ -1,6 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using RestaurantBookingSystem.Data.Repository.Contracts;
 using RestaurantBookingSystem.Services.Contracts;
 using RestaurantBookingSystem.ViewModels.Customer;
+using RestaurantBookingSystem.ViewModels.Shared;
 
 namespace RestaurantBookingSystem.Services
 {
@@ -76,7 +78,7 @@ namespace RestaurantBookingSystem.Services
                     })
                     .ToList()
             };
-            }
+        }
 
         public async Task<CustomerEditViewModel?> GetCustomerForEditAsync(int id)
         {
@@ -93,6 +95,46 @@ namespace RestaurantBookingSystem.Services
                 Email = customer.Email,
                 Status = customer.Status,
                 Notes = customer.Notes
+            };
+        }
+
+        public async Task<PagedResult<CustomerIndexViewModel>> GetPagedCustomersAsync(int page, int pageSize, string? searchTerm = null)
+        {
+            var query = _customerRepository.GetAllWithIncludes().AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.ToLower().Trim();
+                query = query.Where(c =>
+                    c.FullName.ToLower().Contains(searchTerm) ||
+                    c.PhoneNumber.Contains(searchTerm) ||
+                    (c.Email != null && c.Email.ToLower().Contains(searchTerm)));
+            }
+
+            var totalItems = await query.CountAsync();
+            var customers = await query
+                  .OrderBy(c => c.FullName)
+                  .Skip((page - 1) * pageSize)
+                  .Take(pageSize)
+                  .ToListAsync();
+
+            return new PagedResult<CustomerIndexViewModel>
+            {
+                Items = customers.Select(c => new CustomerIndexViewModel
+                {
+                    Id = c.Id,
+                    FullName = c.FullName,
+                    PhoneNumber = c.PhoneNumber,
+                    Email = c.Email,
+                    Status = c.Status,
+                    TotalReservations = c.Reservations.Count,
+                    LastReservationDate = c.Reservations
+                .OrderByDescending(r => r.Date)
+                .Select(r => (DateTime?)r.Date)
+                .FirstOrDefault()
+                }).ToList(),
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling((double)totalItems / pageSize)
             };
         }
 
