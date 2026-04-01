@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RestaurantBookingSystem.Data.Configurations;
 using RestaurantBookingSystem.Data.Models;
@@ -16,6 +16,7 @@ namespace RestaurantBookingSystem.Data
         public virtual DbSet<Customer> Customers { get; set; } = null!;
         public virtual DbSet<Reservation> Reservations { get; set; } = null!;
         public virtual DbSet<RestaurantSettings> RestaurantSettings { get; set; } = null!;
+        public virtual DbSet<Event> Events { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

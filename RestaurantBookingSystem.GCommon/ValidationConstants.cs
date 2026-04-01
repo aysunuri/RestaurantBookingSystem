@@ -21,5 +21,9 @@ namespace RestaurantBookingSystem.GCommon
         public const string PhoneValidationRegex = @"^\+?[0-9]{8,15}$";
 
         public const int RestaurantNameMax = 100;
+
+        public const int EventNameMaxLength = 100;
+        public const int EventDescriptionMaxLength = 500;
+        public const int ImageUrlMaxLength= 2048;
     }
 }
