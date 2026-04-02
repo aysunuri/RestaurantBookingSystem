@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RestaurantBookingSystem.Data.Models;
+using RestaurantBookingSystem.Services;
 using RestaurantBookingSystem.Services.Contracts;
 using RestaurantBookingSystem.ViewModels;
 using System.Diagnostics;
@@ -10,15 +12,28 @@ namespace RestaurantBookingSystem.Controllers
     public class HomeController : Controller
     {
         private readonly IReservationService _reservationService;
+        private readonly IEventService _eventService;
+        private readonly ISettingsService _settingsService;
         
-        public HomeController(IReservationService reservationService)
+        public HomeController(
+            IReservationService reservationService,
+            IEventService eventService,
+            ISettingsService settingsService)
         {
             _reservationService = reservationService;
+            _eventService = eventService;
+            _settingsService = settingsService;
         }
 
         public async Task<IActionResult> Index()
         {
             var reservationsToday = await _reservationService.GetTodayReservationsAsync();
+            var events = await _eventService.GetActiveEventsAsync();
+            var settings = await _settingsService.GetSettingsAsync();
+
+            ViewBag.Events = events;
+            ViewBag.OpeningHour = settings.OpeningHour.ToString(@"hh\:mm");
+            ViewBag.ClosingHour = settings.ClosingHour.ToString(@"hh\:mm");
 
             return View(reservationsToday);
         }

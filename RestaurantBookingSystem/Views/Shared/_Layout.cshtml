@@ -47,12 +47,26 @@
                                 <i class="bi bi-people"></i> Customers
                             </a>
                         </li>
+
                         @if (User.IsInRole("Admin"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Admin" asp-controller="Settings" asp-action="Index">
-                                    <i class="bi bi-gear-fill"></i> Settings
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-person-fill-gear"></i>
+                                    Admin
                                 </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Settings" asp-action="Index">
+                                            <i class="bi bi-gear-fill"></i> Settings
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Events" asp-action="Index">
+                                            <i class="bi bi-calendar-event"></i> Events
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         }
                     </ul>

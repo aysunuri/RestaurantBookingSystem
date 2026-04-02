@@ -1,10 +1,11 @@
-﻿@model IEnumerable<RestaurantBookingSystem.ViewModels.Reservation.ReservationIndexViewModel>
+@model IEnumerable<RestaurantBookingSystem.ViewModels.Reservation.ReservationIndexViewModel>
 
 @{
     ViewData["Title"] = "Home Page";
     var reservations = Model?.ToList();
 }
-
+<div class="row">
+    <div class="col-md-8">
 <div class="hero-small text-center text-white">
     <div class="title-container">
         <h1 class="hero-title">Restaurant Booking System</h1>
@@ -55,3 +56,55 @@
         <a class="btn btn-light btn-lg" href="/Identity/Account/Login">Login to Continue</a>
     </div>
 }
+</div>
+    <div class="col-md-4">
+
+        <div class="soft-box mt-5">
+            <h5 class="text-center mb-3">Upcoming Events <i class="bi bi-bell"></i></h5>
+
+            <div class="d-flex overflow-auto gap-3 pb-2">
+                @foreach (var ev in ViewBag.Events)
+                {
+                    <div class="card" style="min-width: 180px;">
+                        <img src="@ev.ImageUrl"
+                             class="card-img-top"
+                             style="height:120px; object-fit:cover;" />
+
+                        <div class="card-body text-center">
+                            <h6 class="card-title">@ev.Name</h6>
+
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <a asp-controller="Events"
+                                   asp-action="Details"
+                                   asp-route-id="@ev.Id"
+                                   class="btn btn-sm btn-primary">
+                                    Details
+                                </a>
+                            }
+                            else
+                            {
+                                <small class="text-muted">
+                                    Login to view details
+                                </small>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="soft-box mt-4 text-center">
+            <h5>Operating Hours</h5>
+
+            <p class="mb-1">
+                <strong>Opening:</strong> @ViewBag.OpeningHour
+            </p>
+
+            <p class="mb-0">
+                <strong>Closing:</strong> @ViewBag.ClosingHour
+            </p>
+        </div>
+
+    </div>
+</div>

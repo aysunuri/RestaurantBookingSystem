@@ -1,0 +1,99 @@
+@model IEnumerable<RestaurantBookingSystem.ViewModels.Event.EventIndexViewModel>
+
+@{
+    ViewData["Title"] = "Manage Events";
+}
+
+<h2 class="text-center mb-4">
+    <span class="title-container">Manage Events</span>
+</h2>
+
+<div class="soft-box">
+    <div class="mb-3">
+        <a class="btn btn-primary"
+           asp-area="Admin"
+           asp-controller="Events"
+           asp-action="Create">
+            <i class="bi bi-plus-circle"></i> Create New Event
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> No events found. Create your first event!
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ev in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(ev.ImageUrl))
+                                {
+                                    <img src="@ev.ImageUrl" alt="@ev.Name" style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px;">
+                                }
+                                else
+                                {
+                                    <div class="bg-secondary d-flex align-items-center justify-content-center" style="width: 80px; height: 60px; border-radius: 4px;">
+                                        <i class="bi bi-image text-white"></i>
+                                    </div>
+                                }
+                            </td>
+                            <td><strong>@ev.Name</strong></td>
+                            <td>@ev.Date.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                @if (ev.IsActive)
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                            </td>
+                            <td>
+                                <a class="btn btn-sm btn-warning"
+                                   asp-area="Admin"
+                                   asp-controller="Events"
+                                   asp-action="Edit"
+                                   asp-route-id="@ev.Id">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+
+                                <a class="btn btn-sm btn-danger"
+                                   asp-area="Admin"
+                                   asp-controller="Events"
+                                   asp-action="Delete"
+                                   asp-route-id="@ev.Id">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

@@ -1,0 +1,48 @@
+@model RestaurantBookingSystem.ViewModels.Event.EventDetailsViewModel
+
+@{
+    ViewData["Title"] = "Event Details";
+}
+
+<h2 class="text-center mb-4">
+    <span class="title-container">Event Details</span>
+</h2>
+
+<div class="soft-box p-4 mx-auto" style="max-width: 500px;">
+
+    <!-- IMAGE -->
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <div class="text-center mb-4">
+            <img src="@Model.ImageUrl"
+                 class="img-fluid rounded"
+                 style="max-height: 300px; object-fit: cover;" />
+        </div>
+    }
+
+    <!-- NAME -->
+    <h3 class="text-center mb-3">@Model.Name</h3>
+
+    <!-- DATE -->
+    <p class="text-center text-muted mb-4">
+        <i class="bi bi-calendar-event"></i>
+        @Model.Date.ToString("dd MMM yyyy")
+    </p>
+
+    <!-- DESCRIPTION -->
+    @if (!string.IsNullOrWhiteSpace(Model.Description))
+    {
+        <div class="text-center mb-4">
+            <h5>Description:</h5>
+            <p>@Model.Description</p>
+        </div>
+    }
+
+    <!-- BACK BUTTON -->
+    <div class="text-center mt-4">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+
+</div>
