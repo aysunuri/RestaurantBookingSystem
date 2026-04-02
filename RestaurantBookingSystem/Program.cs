@@ -42,11 +42,13 @@ namespace RestaurantBookingSystem
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<ITableRepository, TableRepository>();
             builder.Services.AddScoped<ISettingsRepository, SettingsRepository>();
+            builder.Services.AddScoped<IEventRepository, EventRepository>();
 
             builder.Services.AddScoped<IReservationService, ReservationService>();
             builder.Services.AddScoped<ITableService, TableService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<ISettingsService, SettingsService>();
+            builder.Services.AddScoped<IEventService, EventService>();
 
             var app = builder.Build();
 
