@@ -1,4 +1,3 @@
-using RestaurantBookingSystem.ViewModels.Event;
 using RestaurantBookingSystem.ViewModels.Events;
 
 namespace RestaurantBookingSystem.Services.Contracts

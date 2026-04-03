@@ -1,3 +1,4 @@
+using AutoMapper;
 using RestaurantBookingSystem.Data.Models;
 using RestaurantBookingSystem.Data.Repository.Contracts;
 using RestaurantBookingSystem.Services.Contracts;
@@ -8,22 +9,19 @@ namespace RestaurantBookingSystem.Services
     public class TableService : ITableService
     {
         private readonly ITableRepository _tableRepository;
+        private readonly IMapper _mapper;
 
-        public TableService(ITableRepository tableRepository)
+        public TableService(ITableRepository tableRepository, IMapper mapper)
         {
             _tableRepository = tableRepository;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<TableIndexViewModel>> GetAllTablesAsync()
         {
             var tables = await _tableRepository.GetAllAsync();
 
-            return tables.Select(t => new TableIndexViewModel
-            {
-                Id = t.Id,
-                TableNumber = t.TableNumber,
-                Seats = t.Seats
-            }).ToList();
+            return _mapper.Map<List<TableIndexViewModel>>(tables);
         }
         public async Task<TableDetailsViewModel?> GetTableDetailsAsync(int id)
         {
@@ -36,15 +34,13 @@ namespace RestaurantBookingSystem.Services
             int totalReservations = await _tableRepository.GetTotalReservationCountAsync(id);
             int futureReservations = await _tableRepository.GetFutureReservationCountAsync(id);
 
-            return new TableDetailsViewModel
-            {
-                Id = table.Id,
-                TableNumber = table.TableNumber,
-                Seats = table.Seats,
-                TodayReservationCount = todayReservations,
-                TotalReservations = totalReservations,
-                FutureReservationCount = futureReservations
-            };
+            var result = _mapper.Map<TableDetailsViewModel>(table);
+
+            result.TodayReservationCount = todayReservations;
+            result.TotalReservations = totalReservations;
+            result.FutureReservationCount = futureReservations;
+
+            return result;
         }
         public async Task<TableFormViewModel?> GetTableFormModelAsync(int id)
         {
@@ -58,12 +54,7 @@ namespace RestaurantBookingSystem.Services
             if (table == null)
                 return null;
 
-            return new TableFormViewModel
-            {
-                Id = table.Id,
-                TableNumber = table.TableNumber,
-                Seats = table.Seats
-            };
+            return _mapper.Map<TableFormViewModel>(table);
         }
         public async Task AddTableAsync(TableFormViewModel model)
         {
@@ -72,11 +63,7 @@ namespace RestaurantBookingSystem.Services
                 throw new InvalidOperationException($"Table number {model.TableNumber} already exists.");
             }
 
-            var table = new Table
-            {
-                TableNumber = model.TableNumber,
-                Seats = model.Seats
-            };
+            var table = _mapper.Map<Table>(model);
 
             await _tableRepository.AddAsync(table);
             await _tableRepository.SaveChangesAsync();
@@ -95,8 +82,7 @@ namespace RestaurantBookingSystem.Services
                 throw new InvalidOperationException($"Table number {model.TableNumber} already exists.");
             }
 
-            table.TableNumber = model.TableNumber;
-            table.Seats = model.Seats;
+            _mapper.Map(model, table);
 
             _tableRepository.Update(table);
             await _tableRepository.SaveChangesAsync();

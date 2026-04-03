@@ -1,9 +1,8 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using RestaurantBookingSystem.Data;
 using RestaurantBookingSystem.Data.Models;
 using RestaurantBookingSystem.Data.Models.Enums;
 using RestaurantBookingSystem.Data.Repository.Contracts;
-using RestaurantBookingSystem.Mappers;
 using RestaurantBookingSystem.Services.Contracts;
 using RestaurantBookingSystem.ViewModels;
 using RestaurantBookingSystem.ViewModels.Reservation;
@@ -17,17 +16,21 @@ namespace RestaurantBookingSystem.Services
         private readonly ICustomerRepository _customerRepository;
         private readonly ITableRepository _tableRepository;
         private readonly ISettingsRepository _settingsRepository;
+        private readonly IMapper _mapper;
+
 
         public ReservationService(
             IReservationRepository reservationRepository,
             ICustomerRepository customerRepository,
             ITableRepository tableRepository,
-            ISettingsRepository settingsRepository)
+            ISettingsRepository settingsRepository,
+            IMapper mapper)
         {
             _reservationRepository = reservationRepository;
             _customerRepository = customerRepository;
             _tableRepository = tableRepository;
             _settingsRepository = settingsRepository;
+            _mapper = mapper;
         }
         public async Task<IEnumerable<ReservationIndexViewModel>> GetAllReservationsAsync(bool includeOld = false)
         {
@@ -42,7 +45,7 @@ namespace RestaurantBookingSystem.Services
                 reservations = await _reservationRepository.GetRecentReservationsAsync(7);
             }
 
-            return reservations.Select(ReservationMapper.ToIndexViewModel).ToList();
+            return _mapper.Map<List<ReservationIndexViewModel>>(reservations);
 
         }
         public async Task<ReservationDetailsViewModel?> GetReservationDetailsAsync(int id)
@@ -54,7 +57,7 @@ namespace RestaurantBookingSystem.Services
                 return null;
             }
 
-            return ReservationMapper.ToDetailsViewModel(reservation);
+            return _mapper.Map<ReservationDetailsViewModel>(reservation);
 
         }
         public async Task<ReservationFormViewModel?> GetReservationFormModelAsync(int id)
@@ -313,15 +316,7 @@ namespace RestaurantBookingSystem.Services
 
             return new PagedResult<ReservationIndexViewModel>
             {
-                Items = reservations.Select(r => new ReservationIndexViewModel
-                {
-                    Id = r.Id,
-                    Date = r.Date.ToString("dd.MM.yyyy"),
-                    Time = r.Time.ToString(@"hh\:mm"),
-                    NumberOfGuests = r.NumberOfGuests,
-                    CustomerName = r.Customer.FullName,
-                    TableNumber = r.Table.TableNumber
-                }).ToList(),
+                Items = _mapper.Map<List<ReservationIndexViewModel>>(reservations),
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling((double)totalItems / pageSize),
                 TotalItems = totalItems, 
@@ -335,7 +330,7 @@ namespace RestaurantBookingSystem.Services
 
             var reservations = await _reservationRepository.GetTodayReservationsAsync();
 
-            return reservations.Select(ReservationMapper.ToIndexViewModel).ToList();
+            return _mapper.Map<List<ReservationIndexViewModel>>(reservations);
         }
 
         public async Task<bool> TableHasEnoughSeatsAsync(int tableId, int guests)

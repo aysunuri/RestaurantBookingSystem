@@ -5,6 +5,7 @@ using RestaurantBookingSystem.Data.Repositories;
 using RestaurantBookingSystem.Data.Repository;
 using RestaurantBookingSystem.Data.Repository.Contracts;
 using RestaurantBookingSystem.Data.Seeders;
+using RestaurantBookingSystem.MappingProfiles;
 using RestaurantBookingSystem.Services;
 using RestaurantBookingSystem.Services.Contracts;
 
@@ -21,6 +22,7 @@ namespace RestaurantBookingSystem
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options =>
             {
@@ -49,6 +51,11 @@ namespace RestaurantBookingSystem
             builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<ISettingsService, SettingsService>();
             builder.Services.AddScoped<IEventService, EventService>();
+
+            builder.Services.AddAutoMapper(typeof(ReservationProfile));
+            builder.Services.AddAutoMapper(typeof(CustomerProfile));
+            builder.Services.AddAutoMapper(typeof(TableProfile));
+            builder.Services.AddAutoMapper(typeof(SettingsProfile));
 
             var app = builder.Build();
 

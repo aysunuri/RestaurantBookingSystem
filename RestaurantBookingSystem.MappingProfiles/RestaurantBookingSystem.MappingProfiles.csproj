@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RestaurantBookingSystem.Data.Models\RestaurantBookingSystem.Data.Models.csproj" />
-    <ProjectReference Include="..\RestaurantBookingSystem.Data\RestaurantBookingSystem.Data.csproj" />
     <ProjectReference Include="..\RestaurantBookingSystem.ViewModels\RestaurantBookingSystem.ViewModels.csproj" />
   </ItemGroup>
 

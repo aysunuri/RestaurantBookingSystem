@@ -1,4 +1,4 @@
-namespace RestaurantBookingSystem.ViewModels.Event
+namespace RestaurantBookingSystem.ViewModels.Events
 {
     public class EventIndexViewModel
     {

@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.23" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.23" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.23" />
@@ -21,6 +22,7 @@
     <ProjectReference Include="..\RestaurantBookingSystem.Data.Models\RestaurantBookingSystem.Data.Models.csproj" />
     <ProjectReference Include="..\RestaurantBookingSystem.Data\RestaurantBookingSystem.Data.csproj" />
     <ProjectReference Include="..\RestaurantBookingSystem.GCommon\RestaurantBookingSystem.GCommon.csproj" />
+    <ProjectReference Include="..\RestaurantBookingSystem.MappingProfiles\RestaurantBookingSystem.MappingProfiles.csproj" />
     <ProjectReference Include="..\RestaurantBookingSystem.Services\RestaurantBookingSystem.Services.csproj" />
     <ProjectReference Include="..\RestaurantBookingSystem.ViewModels\RestaurantBookingSystem.ViewModels.csproj" />
   </ItemGroup>

@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using RestaurantBookingSystem.Data.Repository.Contracts;
 using RestaurantBookingSystem.Services.Contracts;
@@ -9,29 +10,19 @@ namespace RestaurantBookingSystem.Services
     public class CustomerService : ICustomerService
     {
         private readonly ICustomerRepository _customerRepository;
+        private readonly IMapper _mapper;
 
-        public CustomerService(ICustomerRepository customerRepository)
+        public CustomerService(ICustomerRepository customerRepository, IMapper mapper)
         {
             _customerRepository = customerRepository;
+            _mapper = mapper;
         }
         public async Task<IEnumerable<CustomerIndexViewModel>> GetAllCustomersAsync()
         {
             var customers = await _customerRepository.GetAllAsync();
 
-            return customers
-               .Select(c => new CustomerIndexViewModel
-               {
-                   Id = c.Id,
-                   FullName = c.FullName,
-                   PhoneNumber = c.PhoneNumber,
-                   Email = c.Email,
-                   Status = c.Status,
-                   TotalReservations = c.Reservations.Count,
-                   LastReservationDate = c.Reservations
-                       .OrderByDescending(r => r.Date)
-                       .Select(r => (DateTime?)r.Date)
-                       .FirstOrDefault()
-               })
+            return _mapper
+               .Map<List<CustomerIndexViewModel>>(customers)
                .OrderBy(c => c.FullName)
                .ToList();
         }
@@ -45,40 +36,25 @@ namespace RestaurantBookingSystem.Services
 
             var today = DateTime.Today;
 
-            return new CustomerDetailsViewModel
-            {
-                Id = customer.Id,
-                FullName = customer.FullName,
-                PhoneNumber = customer.PhoneNumber,
-                Email = customer.Email,
-                Status = customer.Status,
-                Notes = customer.Notes,
-                TotalReservations = customer.Reservations.Count,
-                UpcomingReservations = customer.Reservations.Count(r => r.Date >= today),
-                CompletedReservations = customer.Reservations.Count(r => r.Date < today),
-                FirstReservationDate = customer.Reservations
-                    .OrderBy(r => r.Date)
-                    .Select(r => (DateTime?)r.Date)
-                    .FirstOrDefault(),
-                LastReservationDate = customer.Reservations
-                    .OrderByDescending(r => r.Date)
-                    .Select(r => (DateTime?)r.Date)
-                    .FirstOrDefault(),
-                ReservationHistory = customer.Reservations
-                    .OrderByDescending(r => r.Date)
-                    .ThenByDescending(r => r.Time)
-                    .Select(r => new CustomerReservationViewModel
-                    {
-                        Id = r.Id,
-                        Date = r.Date,
-                        Time = r.Time,
-                        NumberOfGuests = r.NumberOfGuests,
-                        TableNumber = r.Table.TableNumber,
-                        Notes = r.Notes
-                    })
-                    .ToList()
-            };
+            var result = _mapper.Map<CustomerDetailsViewModel>(customer);
+
+            result.ReservationHistory = customer.Reservations
+                .OrderByDescending(r => r.Date)
+                .ThenByDescending(r => r.Time)
+                .Select(r => new CustomerReservationViewModel
+                {
+                    Id = r.Id,
+                    Date = r.Date,
+                    Time = r.Time,
+                    NumberOfGuests = r.NumberOfGuests,
+                    TableNumber = r.Table.TableNumber,
+                    Notes = r.Notes
+                })
+                .ToList();
+
+            return result;
         }
+        
 
         public async Task<CustomerEditViewModel?> GetCustomerForEditAsync(int id)
         {
@@ -87,15 +63,7 @@ namespace RestaurantBookingSystem.Services
             if (customer == null)
                 return null;
 
-            return new CustomerEditViewModel
-            {
-                Id = customer.Id,
-                FullName = customer.FullName,
-                PhoneNumber = customer.PhoneNumber,
-                Email = customer.Email,
-                Status = customer.Status,
-                Notes = customer.Notes
-            };
+            return _mapper.Map<CustomerEditViewModel>(customer);
         }
 
         public async Task<PagedResult<CustomerIndexViewModel>> GetPagedCustomersAsync(int page, int pageSize, string? searchTerm = null)
@@ -120,19 +88,7 @@ namespace RestaurantBookingSystem.Services
 
             return new PagedResult<CustomerIndexViewModel>
             {
-                Items = customers.Select(c => new CustomerIndexViewModel
-                {
-                    Id = c.Id,
-                    FullName = c.FullName,
-                    PhoneNumber = c.PhoneNumber,
-                    Email = c.Email,
-                    Status = c.Status,
-                    TotalReservations = c.Reservations.Count,
-                    LastReservationDate = c.Reservations
-                .OrderByDescending(r => r.Date)
-                .Select(r => (DateTime?)r.Date)
-                .FirstOrDefault()
-                }).ToList(),
+                Items = _mapper.Map<List<CustomerIndexViewModel>>(customers),
                 CurrentPage = page,
                 TotalPages = (int)Math.Ceiling((double)totalItems / pageSize)
             };
@@ -142,19 +98,7 @@ namespace RestaurantBookingSystem.Services
         {
             var customers = await _customerRepository.SearchAsync(searchTerm);
 
-            return customers.Select(c => new CustomerIndexViewModel
-            {
-                Id = c.Id,
-                FullName = c.FullName,
-                PhoneNumber = c.PhoneNumber,
-                Email = c.Email,
-                Status = c.Status,
-                TotalReservations = c.Reservations.Count,
-                LastReservationDate = c.Reservations
-                    .OrderByDescending(r => r.Date)
-                    .Select(r => (DateTime?)r.Date)
-                    .FirstOrDefault()
-            }).ToList();
+            return _mapper.Map<List<CustomerIndexViewModel>>(customers);
         }
 
         public async Task<bool> UpdateCustomerStatusAsync(CustomerEditViewModel model)

@@ -1,3 +1,4 @@
+using AutoMapper;
 using RestaurantBookingSystem.Data.Repository.Contracts;
 using RestaurantBookingSystem.Services.Contracts;
 using RestaurantBookingSystem.ViewModels.Settings;
@@ -7,10 +8,12 @@ namespace RestaurantBookingSystem.Services
     public class SettingsService : ISettingsService
     {
         private readonly ISettingsRepository _settingsRepository;
+        private readonly IMapper _mapper;
 
-        public SettingsService(ISettingsRepository settingsRepository)
+        public SettingsService(ISettingsRepository settingsRepository, IMapper mapper)
         {
             _settingsRepository = settingsRepository;
+            _mapper = mapper;
         }
 
         public async Task<SettingsViewModel?> GetSettingsAsync()
@@ -20,13 +23,7 @@ namespace RestaurantBookingSystem.Services
             if (settings == null)
                 return null;
 
-            return new SettingsViewModel
-            {
-                Id = settings.Id,
-                RestaurantName = settings.RestaurantName,
-                OpeningHour = settings.OpeningHour,
-                ClosingHour = settings.ClosingHour
-            };
+            return _mapper.Map<SettingsViewModel>(settings);
         }
 
         public async Task<bool> UpdateSettingsAsync(SettingsViewModel model)
@@ -36,9 +33,7 @@ namespace RestaurantBookingSystem.Services
             if (settings == null)
                 return false;
 
-            settings.RestaurantName = model.RestaurantName;
-            settings.OpeningHour = model.OpeningHour;
-            settings.ClosingHour = model.ClosingHour;
+            _mapper.Map(model, settings);
 
             _settingsRepository.Update(settings);
             var result = await _settingsRepository.SaveChangesAsync();

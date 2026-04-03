@@ -1,7 +1,7 @@
+using AutoMapper;
 using RestaurantBookingSystem.Data.Models;
 using RestaurantBookingSystem.Data.Repository.Contracts;
 using RestaurantBookingSystem.Services.Contracts;
-using RestaurantBookingSystem.ViewModels.Event;
 using RestaurantBookingSystem.ViewModels.Events;
 
 namespace RestaurantBookingSystem.Services
@@ -9,40 +9,26 @@ namespace RestaurantBookingSystem.Services
     public class EventService : IEventService
     {
         private readonly IEventRepository _eventRepository;
+        private readonly IMapper _mapper;
 
-        public EventService(IEventRepository eventRepository)
+        public EventService(IEventRepository eventRepository, IMapper mapper)
         {
             _eventRepository = eventRepository;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<EventIndexViewModel>> GetAllEventsAsync()
         {
             var events = await _eventRepository.GetAllAsync();
 
-            return events.Select(e => new EventIndexViewModel
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Description = e.Description,
-                Date = e.Date,
-                ImageUrl = e.ImageUrl,
-                IsActive = e.IsActive
-            }).ToList();
+            return _mapper.Map<List<EventIndexViewModel>>(events);
         }
 
         public async Task<IEnumerable<EventIndexViewModel>> GetActiveEventsAsync()
         {
             var events = await _eventRepository.GetActiveEventsAsync();
 
-            return events.Select(e => new EventIndexViewModel
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Description = e.Description,
-                Date = e.Date,
-                ImageUrl = e.ImageUrl,
-                IsActive = e.IsActive
-            }).ToList();
+            return _mapper.Map<List<EventIndexViewModel>>(events);
         }
 
         public async Task<EventDetailsViewModel?> GetEventDetailsAsync(int id)
@@ -52,15 +38,7 @@ namespace RestaurantBookingSystem.Services
             if (eventEntity == null)
                 return null;
 
-            return new EventDetailsViewModel
-            {
-                Id = eventEntity.Id,
-                Name = eventEntity.Name,
-                Description = eventEntity.Description,
-                Date = eventEntity.Date,
-                ImageUrl = eventEntity.ImageUrl,
-                IsActive = eventEntity.IsActive
-            };
+            return _mapper.Map<EventDetailsViewModel>(eventEntity);
         }
 
         public async Task<EventFormViewModel?> GetEventForEditAsync(int id)
@@ -70,27 +48,12 @@ namespace RestaurantBookingSystem.Services
             if (eventEntity == null)
                 return null;
 
-            return new EventFormViewModel
-            {
-                Id = eventEntity.Id,
-                Name = eventEntity.Name,
-                Description = eventEntity.Description,
-                Date = eventEntity.Date,
-                ImageUrl = eventEntity.ImageUrl,
-                IsActive = eventEntity.IsActive
-            };
+            return _mapper.Map<EventFormViewModel>(eventEntity);
         }
 
         public async Task CreateEventAsync(EventFormViewModel model)
         {
-            var eventEntity = new Event
-            {
-                Name = model.Name,
-                Description = model.Description,
-                Date = model.Date,
-                ImageUrl = model.ImageUrl,
-                IsActive = model.IsActive
-            };
+            var eventEntity = _mapper.Map<Event>(model);
 
             await _eventRepository.AddAsync(eventEntity);
             await _eventRepository.SaveChangesAsync();
@@ -103,11 +66,7 @@ namespace RestaurantBookingSystem.Services
             if (eventEntity == null)
                 return false;
 
-            eventEntity.Name = model.Name;
-            eventEntity.Description = model.Description;
-            eventEntity.Date = model.Date;
-            eventEntity.ImageUrl = model.ImageUrl;
-            eventEntity.IsActive = model.IsActive;
+            _mapper.Map(model, eventEntity);
 
             _eventRepository.Update(eventEntity);
             await _eventRepository.SaveChangesAsync();
