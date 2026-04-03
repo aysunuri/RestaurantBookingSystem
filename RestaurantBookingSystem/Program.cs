@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RestaurantBookingSystem.Data;
 using RestaurantBookingSystem.Data.Repositories;
@@ -38,7 +39,10 @@ namespace RestaurantBookingSystem
                 options.AccessDeniedPath = "/Home/AccessDenied";
             });
 
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+            });
 
             builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
@@ -72,6 +76,7 @@ namespace RestaurantBookingSystem
             }
 
             app.UseHttpsRedirection();
+            app.UseHsts();
             app.UseStaticFiles();
 
             app.UseRouting();
