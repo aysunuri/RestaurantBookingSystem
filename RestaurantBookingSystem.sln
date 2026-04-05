@@ -30,6 +30,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mapping", "Mapping", "{3FD0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestaurantBookingSystem.MappingProfiles", "RestaurantBookingSystem.MappingProfiles\RestaurantBookingSystem.MappingProfiles.csproj", "{7A7F33C3-C18F-4B2F-B068-5F2A7BA7118C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F5E6A22F-9F57-448D-A681-C93ADB3474E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestaurantBookingSystem.Services.Tests", "RestaurantBookingSystem.Services.Tests\RestaurantBookingSystem.Services.Tests.csproj", "{CF50AA2D-0A02-42B5-AA21-72426919EBE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +68,10 @@ Global
 		{7A7F33C3-C18F-4B2F-B068-5F2A7BA7118C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A7F33C3-C18F-4B2F-B068-5F2A7BA7118C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A7F33C3-C18F-4B2F-B068-5F2A7BA7118C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF50AA2D-0A02-42B5-AA21-72426919EBE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF50AA2D-0A02-42B5-AA21-72426919EBE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF50AA2D-0A02-42B5-AA21-72426919EBE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF50AA2D-0A02-42B5-AA21-72426919EBE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,6 +83,7 @@ Global
 		{DCA4798F-7E10-4C14-B195-605FEFD5F6FB} = {564733F8-0854-47F2-B74E-A7AB1D428677}
 		{C7835B96-1E27-41F7-9F53-DFF5768B5A0A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{7A7F33C3-C18F-4B2F-B068-5F2A7BA7118C} = {3FD0FADC-135A-41CB-8D86-C7764C40B459}
+		{CF50AA2D-0A02-42B5-AA21-72426919EBE4} = {F5E6A22F-9F57-448D-A681-C93ADB3474E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {92E67D31-EF34-46E9-AE3B-ED8573C33B58}
