@@ -79,6 +79,11 @@ namespace RestaurantBookingSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, TableFormViewModel model)
         {
+            if (id != model.Id)
+            {
+                return BadRequest();
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);

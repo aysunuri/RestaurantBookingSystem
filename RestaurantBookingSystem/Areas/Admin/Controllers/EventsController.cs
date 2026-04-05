@@ -64,8 +64,9 @@ namespace RestaurantBookingSystem.Areas.Admin.Controllers
         {
             if (id != model.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
+        
 
             if (!ModelState.IsValid)
             {

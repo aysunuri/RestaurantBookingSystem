@@ -44,12 +44,12 @@ namespace RestaurantBookingSystem.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(SettingsViewModel model)
+        public async Task<IActionResult> Edit(int id,SettingsViewModel model)
         {
-            Console.WriteLine($"=== EDIT POST ===");
-            Console.WriteLine($"Name: {model.RestaurantName}");
-            Console.WriteLine($"Opening: {model.OpeningHour}");
-            Console.WriteLine($"Closing: {model.ClosingHour}");
+            if (id != model.Id)
+            {
+                return BadRequest();
+            }
 
             if (!ModelState.IsValid)
             {

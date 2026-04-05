@@ -76,6 +76,10 @@ namespace RestaurantBookingSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(int id,ReservationFormViewModel model)
         {
+            if (id != model.Id)
+            {
+                return BadRequest();
+            }
             if (!ModelState.IsValid)
             {
                 model.Tables = await _reservationService.GetTablesDropDownAsync();
