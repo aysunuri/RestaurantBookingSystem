@@ -32,8 +32,8 @@ namespace RestaurantBookingSystem.Controllers
             var settings = await _settingsService.GetSettingsAsync();
 
             ViewBag.Events = events;
-            ViewBag.OpeningHour = settings.OpeningHour.ToString(@"hh\:mm");
-            ViewBag.ClosingHour = settings.ClosingHour.ToString(@"hh\:mm");
+            ViewBag.OpeningHour = settings?.OpeningHour.ToString(@"hh\:mm") ?? "10:00";
+            ViewBag.ClosingHour = settings?.ClosingHour.ToString(@"hh\:mm") ?? "22:00";
 
             return View(reservationsToday);
         }

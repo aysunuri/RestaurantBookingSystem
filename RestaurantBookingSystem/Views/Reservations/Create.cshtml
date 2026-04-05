@@ -1,71 +1,132 @@
-﻿@model ReservationFormViewModel
+@model ReservationFormViewModel
+
+@{
+    ViewData["Title"] = "Create Reservation";
+}
 
 <h2 class="text-center mb-4">
-    <span class="title-container">Create Reservation</span>
+    <span class="title-container">
+        <i class="bi bi-calendar-plus"></i> Create Reservation
+    </span>
 </h2>
 
 <div class="soft-box" style="max-width: 700px; margin: 0 auto;">
     <form asp-action="Create" method="post">
         <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-        <div class="mb-3">
-            <label asp-for="Date" class="form-label"></label>
-            <input asp-for="Date" class="form-control" type="date" />
-            <span asp-validation-for="Date" class="text-danger"></span>
+
+        <!-- Reservation Date & Time -->
+        <div class="mb-4">
+            <h5 class="text-primary mb-3">
+                <i class="bi bi-calendar-check"></i> When?
+            </h5>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Date" class="form-label fw-bold">
+                        <i class="bi bi-calendar3"></i> Date
+                    </label>
+                    <input asp-for="Date" class="form-control form-control-lg" type="date" />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Time" class="form-label fw-bold">
+                        <i class="bi bi-clock"></i> Time
+                    </label>
+                    <input asp-for="Time" class="form-control form-control-lg" type="time" />
+                    <span asp-validation-for="Time" class="text-danger"></span>
+                    @if (ViewBag.OpeningTime != null)
+                    {
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle"></i> Hours: @ViewBag.OpeningTime - @ViewBag.ClosingTime
+                        </small>
+                    }
+                </div>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label asp-for="Time" class="form-label"></label>
-            <input asp-for="Time" class="form-control" type="time" />
-            <span asp-validation-for="Time" class="text-danger"></span>
-            @if (ViewBag.OpeningTime != null)
-            {
-                <small class="text-muted">
-                    Restaurant hours: @ViewBag.OpeningTime - @ViewBag.ClosingTime
-                </small>
-            }
+        <!-- Party Size & Table -->
+        <div class="mb-4">
+            <h5 class="text-primary mb-3">
+                <i class="bi bi-people"></i> Party Details
+            </h5>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="NumberOfGuests" class="form-label fw-bold">
+                        <i class="bi bi-person-plus"></i> Number of Guests
+                    </label>
+                    <input asp-for="NumberOfGuests" class="form-control form-control-lg" type="number" min="1" max="20" />
+                    <span asp-validation-for="NumberOfGuests" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="TableId" class="form-label fw-bold">
+                        <i class="bi bi-table"></i> Table
+                    </label>
+                    <select asp-for="TableId" asp-items="@(new SelectList(Model.Tables, "Value", "Text"))" class="form-select form-select-lg">
+                        <option value="">Select a table...</option>
+                    </select>
+                    <span asp-validation-for="TableId" class="text-danger"></span>
+                </div>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label asp-for="NumberOfGuests" class="form-label"></label>
-            <input asp-for="NumberOfGuests" class="form-control" type="number" min="1" max="20" />
-            <span asp-validation-for="NumberOfGuests" class="text-danger"></span>
+        <!-- Customer Information -->
+        <div class="mb-4">
+            <h5 class="text-primary mb-3">
+                <i class="bi bi-person-circle"></i> Customer Information
+            </h5>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="CustomerName" class="form-label fw-bold">
+                        <i class="bi bi-person"></i> Full Name
+                    </label>
+                    <input asp-for="CustomerName" class="form-control form-control-lg" />
+                    <span asp-validation-for="CustomerName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="CustomerPhone" class="form-label fw-bold">
+                        <i class="bi bi-telephone"></i> Phone Number
+                    </label>
+                    <input asp-for="CustomerPhone" class="form-control form-control-lg"/>
+                    <span asp-validation-for="CustomerPhone" class="text-danger"></span>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="CustomerEmail" class="form-label fw-bold">
+                        <i class="bi bi-envelope"></i> Email
+                    </label>
+                    <input asp-for="CustomerEmail" class="form-control form-control-lg" type="email" />
+                    <span asp-validation-for="CustomerEmail" class="text-danger"></span>
+                </div>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <label asp-for="CustomerName" class="form-label"></label>
-            <input asp-for="CustomerName" class="form-control" />
-            <span asp-validation-for="CustomerName" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="CustomerPhone" class="form-label"></label>
-            <input asp-for="CustomerPhone" class="form-control" />
-            <span asp-validation-for="CustomerPhone" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="CustomerEmail" class="form-label"></label>
-            <input asp-for="CustomerEmail" class="form-control" type="email" />
-            <span asp-validation-for="CustomerEmail" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="TableId" class="form-label"></label>
-            <select asp-for="TableId" asp-items="@(new SelectList(Model.Tables, "Value", "Text"))" class="form-select"></select>
-            <span asp-validation-for="TableId" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="Notes" class="form-label"></label>
-            <textarea asp-for="Notes" class="form-control"></textarea>
+        <!-- Special Requests -->
+        <div class="mb-4">
+            <label asp-for="Notes" class="form-label fw-bold">
+                <i class="bi bi-chat-left-text"></i> Special Requests (Optional)
+            </label>
+            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Any special requirements? (e.g., allergies, occasion, seating preference)"></textarea>
             <span asp-validation-for="Notes" class="text-danger"></span>
         </div>
 
-        <div class="text-center mt-3">
-            <button type="submit" class="btn btn-primary px-4">Create Reservation</button>
+
+        <!-- Buttons -->
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary btn-lg px-5">
+                <i class="bi bi-check-circle"></i> Create Reservation
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4 ms-2">
+                <i class="bi bi-arrow-left"></i> Cancel
+            </a>
         </div>
     </form>
 </div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

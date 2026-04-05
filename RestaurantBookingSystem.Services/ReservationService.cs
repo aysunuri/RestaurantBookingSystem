@@ -105,10 +105,19 @@ namespace RestaurantBookingSystem.Services
             if (!await IsWithinOperatingHoursAsync(model.Time))
             {
                 var settings = await _settingsRepository.GetSettingsAsync();
-                var lastSeating = settings!.ClosingHour - TimeSpan.FromHours(1);
+
+                var closingDisplay = settings!.ClosingHour == TimeSpan.Zero
+                    ? "00:00 (Midnight)"
+                    : settings.ClosingHour.ToString(@"hh\:mm");
+
+                var effectiveClosing = settings.ClosingHour == TimeSpan.Zero
+                    ? TimeSpan.FromHours(24)
+                    : settings.ClosingHour;
+
+                var lastSeating = effectiveClosing - TimeSpan.FromHours(1);
 
                 throw new InvalidOperationException(
-                   $"Invalid reservation time. Operating hours are {settings.OpeningHour:hh\\:mm} - {settings.ClosingHour:hh\\:mm}, last reservation accepted at {lastSeating:hh\\:mm}.");
+                   $"Invalid reservation time. Operating hours are {settings.OpeningHour:hh\\:mm} - {closingDisplay}, last reservation accepted at {lastSeating:hh\\:mm}.");
             }
             if (!await TableHasEnoughSeatsAsync(model.TableId, model.NumberOfGuests))
             {
@@ -203,10 +212,19 @@ namespace RestaurantBookingSystem.Services
             if (!await IsWithinOperatingHoursAsync(model.Time))
             {
                 var settings = await _settingsRepository.GetSettingsAsync();
-                var lastSeating = settings!.ClosingHour - TimeSpan.FromHours(1);
+
+                var closingDisplay = settings!.ClosingHour == TimeSpan.Zero
+                    ? "00:00 (Midnight)"
+                    : settings.ClosingHour.ToString(@"hh\:mm");
+
+                var effectiveClosing = settings.ClosingHour == TimeSpan.Zero
+                    ? TimeSpan.FromHours(24)
+                    : settings.ClosingHour;
+
+                var lastSeating = effectiveClosing - TimeSpan.FromHours(1);
 
                 throw new InvalidOperationException(
-                   $"Invalid reservation time. Operating hours are {settings.OpeningHour:hh\\:mm} - {settings.ClosingHour:hh\\:mm}, last reservation accepted at {lastSeating:hh\\:mm}.");
+                   $"Invalid reservation time. Operating hours are {settings.OpeningHour:hh\\:mm} - {closingDisplay}, last reservation accepted at {lastSeating:hh\\:mm}.");
             }
             if (!await TableHasEnoughSeatsAsync(model.TableId, model.NumberOfGuests))
             {
@@ -343,15 +361,22 @@ namespace RestaurantBookingSystem.Services
             return await _reservationRepository.IsTableAvailableAsync(tableId, date, time, ignoreReservationId);
         }
 
-        public async Task<bool> IsWithinOperatingHoursAsync(TimeSpan time)
+        
+       public async Task<bool> IsWithinOperatingHoursAsync(TimeSpan time)
         {
             var settings = await _settingsRepository.GetSettingsAsync();
 
             if (settings == null)
-                return true;  // If no settings, allow any time
+                return true;
 
             var minimumDiningTime = TimeSpan.FromHours(1);
-            var latestAllowedTime = settings.ClosingHour - minimumDiningTime;
+
+   
+            var effectiveClosingHour = settings.ClosingHour == TimeSpan.Zero
+                ? TimeSpan.FromHours(24)
+                : settings.ClosingHour;
+
+            var latestAllowedTime = effectiveClosingHour - minimumDiningTime;
 
             return time >= settings.OpeningHour && time <= latestAllowedTime;
         }

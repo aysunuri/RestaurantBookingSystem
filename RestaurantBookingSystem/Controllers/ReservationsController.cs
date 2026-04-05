@@ -58,6 +58,7 @@ namespace RestaurantBookingSystem.Controllers
             }
             catch (InvalidOperationException ex)
             {
+
                 ModelState.AddModelError("", ex.Message);
                 model.Tables = await _reservationService.GetTablesDropDownAsync();
                 return View(model);

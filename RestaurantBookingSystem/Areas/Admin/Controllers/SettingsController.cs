@@ -56,7 +56,7 @@ namespace RestaurantBookingSystem.Areas.Admin.Controllers
                 return View(model);
             }
 
-            if (model.ClosingHour <= model.OpeningHour)
+            if (model.ClosingHour != TimeSpan.Zero && model.ClosingHour <= model.OpeningHour)
             {
                 ModelState.AddModelError("ClosingHour", "Closing hour must be after opening hour.");
                 return View(model);
