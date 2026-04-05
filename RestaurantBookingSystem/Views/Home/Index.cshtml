@@ -1,110 +1,187 @@
-@model IEnumerable<RestaurantBookingSystem.ViewModels.Reservation.ReservationIndexViewModel>
-
 @{
     ViewData["Title"] = "Home Page";
-    var reservations = Model?.ToList();
+    var events = ViewBag.Events as IEnumerable<RestaurantBookingSystem.ViewModels.Events.EventIndexViewModel>;
+    var todayReservations = ViewBag.TodayReservations as IEnumerable<RestaurantBookingSystem.ViewModels.Reservation.ReservationIndexViewModel>;
+    var openingHour = ViewBag.OpeningHour;
+    var closingHour = ViewBag.ClosingHour;
 }
+
 <div class="row">
+    <!-- Left Side: Main Content -->
     <div class="col-md-8">
-<div class="hero-small text-center text-white">
-    <div class="title-container">
-        <h1 class="hero-title">Restaurant Booking System</h1>
-    </div>
-    <p class="hero-subtitle">
-        Manage tables, customers, and reservations effortlessly.
-    </p>
-
-    <div class="mt-4">
-      <a class="btn btn-primary btn-lg" asp-action="Create" asp-controller="Reservations">
-    📅 Make Reservation
-</a>
-        <a class="btn btn-light btn-lg" asp-action="Index" asp-controller="Reservations">
-    📋 View All Reservations
-</a>
-    </div>
-</div>
-
-<div class="soft-box mt-5" style="max-width: 700px; margin: 0 auto;">
-    <h3 class="text-center mb-3">Today's Reservations</h3>
-
-    @if (reservations == null || !reservations.Any())
-    {
-        <p class="text-center text-muted mb-0">No reservations for today.</p>
-    }
-    else
-    {
-        <p class="text-center fw-bold">@reservations.Count reservation(s) today</p>
-
-        <ul class="list-group">
-            @foreach (var r in reservations)
-            {
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <span>
-                        <strong>@r.Time</strong>
-                        <span class="customer-name">@r.CustomerName</span>
-                    </span>
-                    <span class="badge bg-secondary">Table @r.TableNumber</span>
-                </li>
-            }
-        </ul>
-    }
-</div>
-
-@if (!User.Identity.IsAuthenticated)
-{
-    <div class="text-center mt-4">
-        <a class="btn btn-light btn-lg" href="/Identity/Account/Login">Login to Continue</a>
-    </div>
-}
-</div>
-    <div class="col-md-4">
-
-        <div class="soft-box mt-5">
-            <h5 class="text-center mb-3">Upcoming Events <i class="bi bi-bell"></i></h5>
-
-            <div class="d-flex overflow-auto gap-3 pb-2">
-                @foreach (var ev in ViewBag.Events)
-                {
-                    <div class="card" style="min-width: 180px;">
-                        <img src="@ev.ImageUrl"
-                             class="card-img-top"
-                             style="height:120px; object-fit:cover;" />
-
-                        <div class="card-body text-center">
-                            <h6 class="card-title">@ev.Name</h6>
-
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                <a asp-controller="Events"
-                                   asp-action="Details"
-                                   asp-route-id="@ev.Id"
-                                   class="btn btn-sm btn-primary">
-                                    Details
-                                </a>
-                            }
-                            else
-                            {
-                                <small class="text-muted">
-                                    Login to view details
-                                </small>
-                            }
-                        </div>
-                    </div>
-                }
+        <!-- Hero Section -->
+        <div class="hero-small text-center text-white">
+            <div class="title-container">
+                <h1 class="hero-title">Restaurant Booking System</h1>
+            </div>
+            <p class="hero-subtitle">
+                Manage tables, customers, and reservations effortlessly.
+            </p>
+            <div class="mt-4">
+                <a class="btn btn-primary btn-lg" asp-action="Create" asp-controller="Reservations">
+                    📅 Make Reservation
+                </a>
+                <a class="btn btn-light btn-lg" asp-action="Index" asp-controller="Reservations">
+                    📋 View All Reservations
+                </a>
             </div>
         </div>
 
-        <div class="soft-box mt-4 text-center">
-            <h5>Operating Hours</h5>
-
-            <p class="mb-1">
-                <strong>Opening:</strong> @ViewBag.OpeningHour
-            </p>
-
-            <p class="mb-0">
-                <strong>Closing:</strong> @ViewBag.ClosingHour
-            </p>
+        <!-- Today's Reservations -->
+        <div class="soft-box mt-5" style="max-width: 700px; margin: 0 auto;">
+            <h3 class="text-center mb-3">
+                <i class="bi bi-calendar-day"></i> Today's Reservations
+            </h3>
+            @if (todayReservations == null || !todayReservations.Any())
+            {
+                <p class="text-center text-muted mb-0">No reservations for today.</p>
+            }
+            else
+            {
+                <p class="text-center fw-bold mb-3">
+                    <i class="bi bi-check-circle text-success"></i>
+                    @todayReservations.Count() reservation(s) today
+                </p>
+                <ul class="list-group">
+                    @foreach (var r in todayReservations.OrderBy(x => x.Time))
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>
+                                <i class="bi bi-clock text-primary"></i>
+                                <strong>@r.Time</strong>
+                                <span class="text-muted ms-2">@r.CustomerName</span>
+                                <span class="badge bg-light text-dark ms-2">
+                                    <i class="bi bi-people"></i> @r.NumberOfGuests
+                                </span>
+                            </span>
+                            <span class="badge bg-secondary">
+                                <i class="bi bi-table"></i> Table @r.TableNumber
+                            </span>
+                        </li>
+                    }
+                </ul>
+            }
         </div>
 
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <div class="text-center mt-4">
+                <a class="btn btn-light btn-lg" asp-area="Identity" asp-page="/Account/Login">
+                    <i class="bi bi-box-arrow-in-right"></i> Login to Continue
+                </a>
+            </div>
+        }
     </div>
-</div>
+
+    <!-- Right Side: Events & Operating Hours -->
+    <div class="col-md-4">
+        <!-- Upcoming Events Carousel -->
+        <div class="soft-box mt-5">
+            <h5 class="text-center mb-3">
+                <i class="bi bi-calendar-event"></i> Upcoming Events
+            </h5>
+
+            @if (events != null && events.Any())
+            {
+                <div id="eventsCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
+                    <!-- Indicators -->
+                    <div class="carousel-indicators">
+                        @for (int i = 0; i < events.Count(); i++)
+                        {
+                            <button type="button"
+                                    data-bs-target="#eventsCarousel"
+                                    data-bs-slide-to="@i"
+                                    class="@(i == 0 ? "active" : "")"
+                                    aria-current="@(i == 0 ? "true" : "false")">
+                            </button>
+                        }
+                    </div>
+
+                    <!-- Carousel Items -->
+                    <div class="carousel-inner" style="border-radius: 8px; overflow: hidden;">
+                        @{
+                            int index = 0;
+                        }
+                        @foreach (var ev in events)
+                        {
+                            <div class="carousel-item @(index == 0 ? "active" : "")">
+                                @if (!string.IsNullOrEmpty(ev.ImageUrl))
+                                {
+                                    <img src="@ev.ImageUrl"
+                                         class="d-block w-100"
+                                         alt="@ev.Name"
+                                         style="height: 200px; object-fit: cover;" />
+                                }
+                                else
+                                {
+                                    <div class="bg-secondary d-flex align-items-center justify-content-center"
+                                         style="height: 200px;">
+                                        <i class="bi bi-calendar-event text-white" style="font-size: 3rem;"></i>
+                                    </div>
+                                }
+                                <div class="carousel-caption d-block" style="background: rgba(0,0,0,0.7); padding: 10px; border-radius: 5px;">
+                                    <h6 class="mb-1">@ev.Name</h6>
+                                    <p class="small mb-2">
+                                        <i class="bi bi-calendar3"></i>
+                                        @ev.Date.ToString("MMM dd, yyyy")
+                                    </p>
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <a asp-controller="Events"
+                                           asp-action="Details"
+                                           asp-route-id="@ev.Id"
+                                           class="btn btn-sm btn-light">
+                                            <i class="bi bi-info-circle"></i> Details
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                            index++;
+                        }
+                    </div>
+
+                    <!-- Controls -->
+                    @if (events.Count() > 1)
+                    {
+                        <button class="carousel-control-prev" type="button" data-bs-target="#eventsCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#eventsCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-center text-muted mb-0">No upcoming events.</p>
+            }
+        </div>
+
+        <!-- Operating Hours (Compact) -->
+        <div class="soft-box mt-4">
+            <h6 class="text-center mb-3">
+                <i class="bi bi-clock"></i> Operating Hours
+            </h6>
+            <div class="row text-center">
+                <div class="col-6">
+                    <i class="bi bi-sunrise text-warning" style="font-size: 1.5rem;"></i>
+                    <p class="small text-muted mb-0 mt-1">Opens</p>
+                    <p class="fw-bold mb-0">@openingHour</p>
+                </div>
+                <div class="col-6">
+                    <i class="bi bi-sunset text-danger" style="font-size: 1.5rem;"></i>
+                    <p class="small text-muted mb-0 mt-1">Closes</p>
+                    <p class="fw-bold mb-0">@closingHour</p>
+                </div>
+            </div>
+            <div class="alert alert-warning mt-3 mb-0 py-2">
+                <small>
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Last seating: 1hr before closing
+                </small>
+            </div>
+        </div>
+    </div>

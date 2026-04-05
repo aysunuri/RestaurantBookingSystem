@@ -12,7 +12,7 @@ namespace RestaurantBookingSystem.Services
 
         public SettingsService(ISettingsRepository settingsRepository, IMapper mapper)
         {
-            _settingsRepository = settingsRepository;
+            _settingsRepository = settingsRepository; 
             _mapper = mapper;
         }
 
