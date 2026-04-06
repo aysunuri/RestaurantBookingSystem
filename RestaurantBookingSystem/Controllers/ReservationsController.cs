@@ -41,8 +41,8 @@ namespace RestaurantBookingSystem.Controllers
             var model = await _reservationService.GetReservationFormModelAsync(0); // id = 0 is a new reservation
             return View(model);
         }
-
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ReservationFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -75,6 +75,7 @@ namespace RestaurantBookingSystem.Controllers
             return View(model);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id,ReservationFormViewModel model)
         {
             if (id != model.Id)

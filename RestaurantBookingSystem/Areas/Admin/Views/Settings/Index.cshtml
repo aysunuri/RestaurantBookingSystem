@@ -34,11 +34,26 @@
                 <dd class="col-sm-7">@Model.OpeningHour.ToString(@"hh\:mm")</dd>
 
                 <dt class="col-sm-5">Closing Hour</dt>
-                <dd class="col-sm-7">@Model.ClosingHour.ToString(@"hh\:mm")</dd>
+                <dd class="col-sm-7">
+                    @if (Model.ClosingHour == TimeSpan.Zero)
+                    {
+                        <span>00:00 (Midnight)</span>
+                    }
+                    else
+                    {
+                        @Model.ClosingHour.ToString(@"hh\:mm")
+                    }
+                </dd>
 
                 <dt class="col-sm-5">Last Seating</dt>
                 <dd class="col-sm-7">
-                    @((Model.ClosingHour - TimeSpan.FromHours(1)).ToString(@"hh\:mm"))
+                    @{
+                        var effectiveClosing = Model.ClosingHour == TimeSpan.Zero
+                        ? TimeSpan.FromHours(24)
+                        : Model.ClosingHour;
+                        var lastSeating = effectiveClosing - TimeSpan.FromHours(1);
+                    }
+                    @lastSeating.ToString(@"hh\:mm")
                     <small class="text-muted">(1 hour before closing)</small>
                 </dd>
             </dl>

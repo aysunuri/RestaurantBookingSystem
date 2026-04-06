@@ -595,7 +595,11 @@ builder.Services.AddAutoMapper(typeof(ReservationProfile).Assembly);
 
 ### Home Page
 *Dashboard with today's reservations and events carousel*
-![Home Page](Screenshots/home.png)
+![Home Page](Screenshots/home1.png)
+
+### Admin Dropdown
+*Role-based menu showing admin-only options*
+![Admin Menu](Screenshots/home-admin.png)
 
 ### Create Reservation
 *Modern form with sectioned layout and validation*
@@ -617,9 +621,6 @@ builder.Services.AddAutoMapper(typeof(ReservationProfile).Assembly);
 *Admin settings with midnight closing support*
 ![Settings](Screenshots/settings.png)
 
-### Admin Dropdown
-*Role-based menu showing admin-only options*
-![Admin Menu](Screenshots/home-admin.png)
 
 ---
 
