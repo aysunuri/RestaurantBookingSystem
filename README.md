@@ -1,10 +1,12 @@
 # 🍽️ Restaurant Booking System
 
-> An internal restaurant management system built for staff to create, manage, and track table reservations with built-in business rule validation.
+> A comprehensive ASP.NET Core MVC application for managing restaurant reservations, tables, customers, and events with advanced features including role-based authorization, customer status management, and dynamic settings.
 
 ![.NET Version](https://img.shields.io/badge/.NET-8.0-purple)
-![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-8.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-MVC-blue)
+![Entity Framework](https://img.shields.io/badge/EF_Core-8.0-orange)
+![Tests](https://img.shields.io/badge/Tests-59%20(72%25%20coverage)-green)
+![License](https://img.shields.io/badge/license-Educational-yellow)
 
 ---
 
@@ -16,9 +18,12 @@
 - [Getting Started](#getting-started)
 - [Project Structure](#project-structure)
 - [Features](#features)
-- [Usage](#usage)
+- [Design Decisions & Architecture](#design-decisions--architecture)
+- [Business Rules & Validations](#business-rules--validations)
+- [Testing](#testing)
 - [Database Setup](#database-setup)
 - [Configuration](#configuration)
+- [Screenshots](#screenshots)
 - [License](#license)
 - [Contact](#contact)
 
@@ -26,22 +31,35 @@
 
 ## 📖 About the Project
 
-This is a comprehensive restaurant table reservation management system built as part of the *ASP.NET Fundamentals* course at SoftUni. It provides restaurant staff with an efficient way to manage bookings, track table availability, and handle customer information. The application features automatic validation with business rules, smart customer management, and a clean, responsive interface designed for daily restaurant operations.
+This is a comprehensive restaurant table reservation management system built as the final project for the **ASP.NET Advanced** course at SoftUni. It provides restaurant staff and administrators with an efficient way to manage bookings, track table availability, handle customer information, and organize special events. The application features advanced architecture patterns, role-based authorization, comprehensive testing, and a modern, responsive interface designed for daily restaurant operations.
 
-**Built for:** Restaurant staff who need a fast, reliable system to manage reservations without complex workflows or unnecessary features.
+**Key Highlights:**
+- 🏗️ **Repository Pattern** - Clean data access layer with generic base repository
+- 🗺️ **AutoMapper Integration** - Automated object-to-object mapping
+- 🎭 **Role-Based Authorization** - Admin and Staff roles with distinct permissions
+- 👥 **Customer Status System** - VIP and Blacklist functionality
+- 📅 **Event Management** - Special events with carousel display
+- ⚙️ **Dynamic Settings** - Configurable restaurant name and operating hours
+- 🧪 **Comprehensive Testing** - 59 unit tests with 72% service layer coverage
+- 🔒 **Security Hardening** - CSRF, XSS, and parameter tampering protection
+
+**Built for:** Restaurant staff and administrators who need a professional, secure system to manage daily operations efficiently.
 
 ---
 
 ## 🛠️ Technologies Used
 
-| Technology            | Version  | Purpose                          |
-|-----------------------|----------|----------------------------------|
-| ASP.NET Core MVC      | 8.0      | Web framework                    |
-| Entity Framework Core | 8.0      | ORM / Database access            |
-| SQL Server            | -        | Database                         |
-| ASP.NET Identity      | 8.0      | Authentication                   |
-| Bootstrap             | 5.3      | Frontend styling                 |
-| Razor Views           | -        | Server-side HTML rendering       |
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| ASP.NET Core MVC | 8.0 | Web framework |
+| Entity Framework Core | 8.0 | ORM / Database access |
+| SQL Server | 2019+ | Database |
+| ASP.NET Identity | 8.0 | Authentication & Authorization |
+| AutoMapper | 12.0 | Object-to-object mapping |
+| xUnit | 2.4 | Unit testing framework |
+| Moq | 4.18 | Mocking framework |
+| Bootstrap | 5.3 | Frontend styling |
+| Bootstrap Icons | 1.11 | Icon library |
 
 ---
 
@@ -50,7 +68,7 @@ This is a comprehensive restaurant table reservation management system built as 
 Make sure you have the following installed before running the project:
 
 - [.NET SDK 8.0+](https://dotnet.microsoft.com/download)
-- [Visual Studio 2022](https://visualstudio.microsoft.com/) or [VS Code](https://code.visualstudio.com/)
+- [Visual Studio 2022](https://visualstudio.microsoft.com/) or [JetBrains Rider](https://www.jetbrains.com/rider/)
 - [SQL Server](https://www.microsoft.com/en-us/sql-server) (LocalDB, Express, or full version)
 - [Git](https://git-scm.com/)
 
@@ -73,14 +91,18 @@ dotnet restore
 
 ### 3. Apply database migrations
 ```bash
+cd RestaurantBookingSystem
 dotnet ef database update
 ```
 
 This will create the database with seeded data:
-- 20 restaurant tables (various capacities: 2-20 seats)
-- 10 sample reservations
-- 10 sample customers
-- Restaurant settings (operating hours: 10:00 AM - 11:00 PM)
+- **Roles:** Admin, Staff
+- **Users:** admin@restaurant.com (password: Admin@123)
+- **Tables:** 20 tables with varying capacities (2-20 seats)
+- **Customers:** 20 sample customers
+- **Reservations:** 20 sample reservations across different dates
+- **Settings:** Restaurant name "Byte & Bite", Hours: 10:00-23:00
+- **Events:** 3 active events (Pizza Day, Taco Fiesta Night, Ladies Night, Sushi & Chill)
 
 ### 4. Run the application
 ```bash
@@ -89,57 +111,120 @@ dotnet run
 
 The app will be available at `https://localhost:5001` or `http://localhost:5000`.
 
-### 5. Create a staff account
+### 5. Login
 
-Navigate to `/Identity/Account/Register`, create your account, and log in to access the system.
+**Admin Account:**
+- Email: `admin@restaurant.com`
+- Password: `Admin@123`
+
+**Or register a new account** - automatically assigned Staff role.
 
 ---
 
 ## 📁 Project Structure
-## 📁 Project Structure
+
 ```
-RestaurantBookingSystem/ (Solution)
+RestaurantBookingSystem.sln (9 Projects)
 │
-├── Data/                                         # Data Access Layer
-│   ├── RestaurantBookingSystem.Data/
-│   │   ├── Configurations/                       # Data seeding
-│   │   ├── Migrations/                           # Database migrations
-│   │   ├── Models/                               # Entity models
-│   │   └── ApplicationDbContext.cs               # DbContext
-│   │
-│   └── RestaurantBookingSystem.Data.Models/      # Entity model definitions
+├── RestaurantBookingSystem/                   # Web Application (MVC)
+│   ├── Controllers/                           # MVC Controllers
+│   │   ├── HomeController.cs
+│   │   ├── ReservationsController.cs
+│   │   ├── TablesController.cs
+│   │   ├── CustomersController.cs
+│   │   └── EventsController.cs
+│   ├── Areas/
+│   │   ├── Admin/                            # Admin Area
+│   │   │   └── Controllers/
+│   │   │       ├── SettingsController.cs     # Restaurant settings
+│   │   │       └── EventsController.cs       # Event management
+│   │   └── Identity/                         # ASP.NET Identity
+│   │       └── Pages/Account/
+│   │           └── Register.cshtml.cs        # Auto-assign Staff role
+│   ├── Views/                                # Razor Views
+│   │   ├── Reservations/                     # CRUD views
+│   │   ├── Tables/                           # CRUD views
+│   │   ├── Customers/                        # Index, Details, Edit
+│   │   ├── Events/                           # Details view
+│   │   ├── Home/                             # Dashboard
+│   │   └── Shared/
+│   │       ├── _Layout.cshtml
+│   │       ├── _Pagination.cshtml            # Reusable pagination
+│   │       ├── BadRequest.cshtml             # 400 error
+│   │       ├── NotFound.cshtml               # 404 error
+│   │       └── ServerError.cshtml            # 500 error
+│   ├── wwwroot/
+│   │   ├── css/site.css                      # Custom styles
+│   │   └── lib/                              # Bootstrap, jQuery
+│   └── Program.cs                            # Application entry point
 │
-├── Mappers/                                      # Mapping Layer
-│   └── RestaurantBookingSystem.Mappers/
-│       └── ReservationMapper.cs                  # Entity-to-ViewModel conversions
+├── RestaurantBookingSystem.Data/              # Data Access Layer
+│   ├── ApplicationDbContext.cs               # EF Core DbContext
+│   ├── Repository/
+│   │   ├── Contracts/                        # Repository interfaces
+│   │   ├── BaseRepository.cs                 # Generic CRUD operations
+│   │   ├── ReservationRepository.cs
+│   │   ├── CustomerRepository.cs
+│   │   ├── TableRepository.cs
+│   │   ├── SettingsRepository.cs
+│   │   └── EventRepository.cs
+│   ├── Configurations/                       # Fluent API + Seeding
+│   │   ├── ReservationConfiguration.cs
+│   │   ├── CustomerConfiguration.cs
+│   │   ├── TableConfiguration.cs
+│   │   ├── RestaurantSettingsConfiguration.cs
+│   │   └── EventConfiguration.cs
+│   ├── Seeders/                              # Identity seeding
+│   │   ├── RoleSeeder.cs
+│   │   └── AdminSeeder.cs
+│   └── Migrations/                           # EF Core migrations
 │
-├── Services/                                     # Business Logic Layer
-│   └── RestaurantBookingSystem.Services/
-│       ├── Contracts/                            # Service interfaces
-│       └── ReservationService.cs                 # Business logic implementation
+├── RestaurantBookingSystem.Data.Models/       # Domain Entities
+│   ├── Reservation.cs
+│   ├── Customer.cs
+│   ├── Table.cs
+│   ├── RestaurantSettings.cs
+│   ├── Event.cs
+│   └── Enums/
+│       └── CustomerStatus.cs                 # Regular, VIP, Blacklisted
 │
-├── Web/                                          # Presentation Layer
-│   ├── RestaurantBookingSystem/ (Web)
-│   │   ├── Controllers/                          # MVC Controllers
-│   │   ├── Views/                                # Razor Views
-│   │   │   ├── Home/
-│   │   │   ├── Reservations/
-│   │   │   └── Shared/                           # Layouts & partials
-│   │   ├── Areas/Identity/                       # ASP.NET Identity pages
-│   │   ├── wwwroot/                              # Static files (CSS, JS, images)
-│   │   ├── appsettings.json                      # Configuration
-│   │   └── Program.cs                            # Application entry point
-│   │
-│   └── RestaurantBookingSystem.ViewModels/       # Data Transfer Objects
-│       └── Reservation/                          # Reservation ViewModels
+├── RestaurantBookingSystem.Services/          # Business Logic Layer
+│   ├── Contracts/                            # Service interfaces
+│   ├── ReservationService.cs
+│   ├── CustomerService.cs
+│   ├── TableService.cs
+│   ├── SettingsService.cs
+│   └── EventService.cs
 │
-├── RestaurantBookingSystem.GCommon/              # Global Constants
-│   └── ValidationConstants.cs                    # Validation constants
+├── RestaurantBookingSystem.Services.Tests/    # Unit Tests
+│   ├── ReservationServiceTests.cs            # 21 tests
+│   ├── CustomerServiceTests.cs               # 15 tests
+│   ├── TableServiceTests.cs                  # 10 tests
+│   ├── SettingsServiceTests.cs               # 4 tests
+│   └── EventServiceTests.cs                  # 9 tests
 │
-├── Screenshots/                                  # README Screenshots
+├── RestaurantBookingSystem.ViewModels/        # Data Transfer Objects
+│   ├── Reservation/
+│   ├── Customer/
+│   ├── Tables/
+│   ├── Settings/
+│   ├── Events/
+│   ├── Shared/
+│   │   └── PagedResult.cs                    # Generic pagination
+│   └── ValidationMessages/                   # Centralized errors
 │
-└── Solution Items/
-    └── README.md                                 # Project documentation
+├── RestaurantBookingSystem.MappingProfiles/   # AutoMapper Configurations
+│   ├── ReservationProfile.cs
+│   ├── CustomerProfile.cs
+│   ├── TableProfile.cs
+│   ├── SettingsProfile.cs
+│   └── EventProfile.cs
+│
+├── RestaurantBookingSystem.Mappers/           # Legacy mapping
+│   └── ReservationMapper.cs
+│
+└── RestaurantBookingSystem.GCommon/           # Shared Constants
+    └── ValidationConstants.cs
 ```
 
 **Architecture:**
@@ -148,50 +233,245 @@ RestaurantBookingSystem/ (Solution)
 - Web project depends on all other projects
 - Following SOLID principles and dependency inversion
 
+---
+
 ## ✨ Features
 
-- ✅ Complete CRUD operations for reservations
-- ✅ Smart customer management (automatic matching and creation)
-- ✅ Operating hours validation (configurable)
-- ✅ Past date prevention
-- ✅ Table Availability Checking
-- ✅ Table capacity validation
-- ✅ Client-side and server-side validation
-- ✅ Staff authentication with ASP.NET Identity
-- ✅ Smart filtering (recent vs. full history)
-- ✅ Responsive UI with Bootstrap
-- ✅ Today's reservations dashboard
+### Core Functionality
+- ✅ **Complete CRUD operations** for reservations, tables and events
+- ✅ **Smart customer management** - Automatic customer matching by phone number
+- ✅ **Operating hours validation** - Configurable by Admin
+- ✅ **Past date prevention** - Cannot create reservations in the past
+- ✅ **Table availability checking** - 3-hour reservation blocks, no double-booking
+- ✅ **Table capacity validation** - Ensures enough seats for party size
+- ✅ **Client-side and server-side validation** - DataAnnotations + jQuery validation
+- ✅ **Staff authentication** with ASP.NET Identity
+- ✅ **Smart filtering** - Recent reservations (7 days) vs. full history
+- ✅ **Responsive UI** with Bootstrap and custom soft-box styling
+- ✅ **Today's reservations dashboard** on home page
+
+### Advanced Features
+- ✅ **Role-based authorization** - Admin and Staff with distinct permissions
+- ✅ **Customer status system** - Regular, VIP, Blacklisted (Admin-only management)
+- ✅ **Event management** - Create, edit, delete events with image carousel
+- ✅ **Dynamic settings** - Configurable restaurant name and operating hours
+- ✅ **Pagination** - Efficient data display (10 items per page)
+- ✅ **Search functionality** - Customer search by name/phone/email
+- ✅ **Midnight support** - Special handling for 00:00 closing time
+- ✅ **Auto-role assignment** - New users automatically get Staff role
+- ✅ **Custom error pages** - 400, 404, 500 with branded styling
 
 ---
 
-## 💻 Usage
+## 🏗️ Design Decisions & Architecture
 
-Using the application after launching it:
+### 1. Repository Pattern
+**Decision:** Implement Repository Pattern to abstract data access.
 
-1. **Register an Account** - Navigate to `/Identity/Account/Register` and create your staff account.
-2. **Log In** - Use your credentials to access the reservation system.
-3. **View Reservations** - See all active reservations (last 7 days + upcoming).
-4. **Create Reservation** - Click "+ Add New Reservation" and fill in customer and booking details.
-5. **Edit/Delete** - Manage existing reservations with full validation.
+**Why:**
+- Separation of concerns - business logic doesn't depend on EF Core
+- Easier to test services (mock repositories instead of DbContext)
+- Flexibility to swap data source in future
+- Follows Dependency Inversion Principle
 
-**Validation Rules:**
-- Time: 10:00 AM - 11:00 PM
-- Date: Cannot be in the past
-- Guests: 1-20, within table capacity
-- Phone: Valid format required
-- Table availability: No double-booking (3-hour windows)
+**Implementation:**
+```csharp
+// Generic base repository for common CRUD
+public class BaseRepository<T> where T : class
+{
+    protected readonly ApplicationDbContext _context;
+    protected readonly DbSet<T> _dbSet;
+    
+    public async Task<T?> GetByIdAsync(int id) { }
+    public async Task<IEnumerable<T>> GetAllAsync() { }
+    public async Task AddAsync(T entity) { }
+    // ... etc
+}
 
-## 📸 Screenshots
+// Specific repositories extend base with custom queries
+public class ReservationRepository : BaseRepository<Reservation>, IReservationRepository
+{
+    public async Task<IEnumerable<Reservation>> GetRecentReservationsAsync(int days) { }
+    public async Task<bool> IsTableAvailableAsync(int tableId, DateTime date, TimeSpan time) { }
+}
+```
 
-### Home Page
-![Home Page](Screenshots/home.png)
+### 2. Service Layer Pattern
+**Decision:** Separate business logic into dedicated service classes.
 
-### Reservations
-![Reservations](Screenshots/reservations.png)
+**Why:**
+- Controllers stay thin (only handle HTTP concerns)
+- Business rules are centralized and reusable
+- Easier to test business logic in isolation
+- Clear Single Responsibility Principle
 
-### Create Reservation
-![Create Reservation](Screenshots/create1.png)
-![Create Reservation](Screenshots/create2.png)
+**Implementation:**
+All business logic, validation, and data orchestration happens in services:
+- `ReservationService` - Reservation business rules (blacklist check, hours validation, availability)
+- `CustomerService` - Customer management and search
+- `TableService` - Table CRUD and statistics
+- `SettingsService` - Restaurant settings management
+- `EventService` - Event CRUD and active event filtering
+
+### 3. AutoMapper Integration
+**Decision:** Use AutoMapper for object-to-object mapping.
+
+**Why:**
+- Eliminates repetitive manual mapping code
+- Centralized mapping configurations
+- Type-safe mapping with compile-time checking
+- Industry-standard tool
+
+**Implementation:**
+```csharp
+// Centralized profiles
+public class ReservationProfile : Profile
+{
+    public ReservationProfile()
+    {
+        CreateMap<Reservation, ReservationDetailsViewModel>()
+            .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FullName))
+            .ForMember(dest => dest.TableNumber, opt => opt.MapFrom(src => src.Table.TableNumber));
+    }
+}
+
+// Usage in services
+var viewModel = _mapper.Map<ReservationDetailsViewModel>(reservation);
+```
+
+### 4. MVC Areas for Admin
+**Decision:** Use MVC Areas to separate admin functionality.
+
+**Why:**
+- Clear separation of admin vs. staff features
+- Easier to apply `[Authorize(Roles = "Admin")]` to entire area
+- Better code organization
+- Scalable for future role-based features
+
+**Implementation:**
+- `Areas/Admin/Controllers/SettingsController.cs` - Restaurant settings (Admin only)
+- `Areas/Admin/Controllers/EventsController.cs` - Event management (Admin only)
+- Regular controllers in root for Staff-accessible features
+
+### 5. ViewModels (DTOs)
+**Decision:** Use ViewModels instead of passing entities directly to views.
+
+**Why:**
+- Security - prevents mass assignment vulnerabilities
+- Flexibility - can combine data from multiple entities
+- Validation - specific validation rules for each operation
+- Separation - entity changes don't break views
+
+**Example:**
+```csharp
+// Instead of passing Reservation entity directly
+public class ReservationFormViewModel
+{
+    public int Id { get; set; }
+    public DateTime Date { get; set; }
+    
+    [Required(ErrorMessage = "Customer name is required")]
+    public string CustomerName { get; set; }
+    
+    // Combines customer data with reservation
+    // Includes dropdown for table selection
+    public SelectList Tables { get; set; }
+}
+```
+
+---
+
+## 🔒 Business Rules & Validations
+
+### Reservation Rules
+1. **Past Date Prevention:** Cannot create reservations for past dates/times
+2. **Operating Hours:** Must be within configurable hours (last seating 1 hour before closing)
+3. **Midnight Support:** Special handling for 00:00 closing (treated as 24:00)
+4. **Table Capacity:** Selected table must have enough seats for party size
+5. **Table Availability:** No overlapping reservations (3-hour blocks)
+6. **Blacklist Check:** Blacklisted customers cannot make reservations
+7. **Customer Matching:** Automatically links to existing customer by phone number
+
+**Example Validation:**
+```csharp
+public async Task<bool> IsWithinOperatingHoursAsync(TimeSpan time)
+{
+    var settings = await _settingsRepository.GetSettingsAsync();
+    var minimumDiningTime = TimeSpan.FromHours(1);
+    
+    // Handle midnight (00:00) as end of day
+    var effectiveClosingHour = settings.ClosingHour == TimeSpan.Zero 
+        ? TimeSpan.FromHours(24) 
+        : settings.ClosingHour;
+    
+    var latestAllowedTime = effectiveClosingHour - minimumDiningTime;
+    return time >= settings.OpeningHour && time <= latestAllowedTime;
+}
+```
+
+### Customer Rules
+1. **Phone Uniqueness:** Phone numbers must be unique
+2. **Status Management:** Only Admins can change customer status (VIP/Blacklist)
+3. **Automatic Linking:** Reservations automatically link to customers by phone
+4. **Email Validation:** Optional but must be valid format if provided
+
+### Table Rules
+1. **Number Uniqueness:** Table numbers must be unique
+2. **Capacity Range:** 1-20 seats
+3. **Deletion Protection:** Cannot delete tables with future reservations
+4. **Historical Preservation:** Cannot delete tables with past reservations
+
+### Settings Rules
+1. **Closing After Opening:** Closing hour must be after opening hour (or 00:00)
+2. **Admin Only:** Only Admins can modify restaurant settings
+3. **Immediate Effect:** Changes apply to new reservations immediately
+
+---
+
+## 🧪 Testing
+
+The project includes comprehensive unit tests with **72% service layer coverage** (exceeds 65% requirement).
+
+### Test Summary
+
+| Test Suite | Tests | Line Coverage | Branch Coverage |
+|------------|-------|---------------|-----------------|
+| ReservationServiceTests | 21 | 65.8% | 71% |
+| CustomerServiceTests | 15 | 69.7% | 75% |
+| TableServiceTests | 10 | 86.3% | 75% |
+| SettingsServiceTests | 4 | 100% | 100% |
+| EventServiceTests | 9 | 87.2% | 75% |
+| **TOTAL** | **59** | **72.1%** | **72.7%** |
+
+### Testing Strategy
+- **AAA Pattern:** Arrange, Act, Assert
+- **Moq Framework:** Repository mocking
+- **xUnit:** Test framework with `[Fact]` attributes
+- **Coverage:** Happy paths, error cases, edge cases
+
+### Example Test
+```csharp
+[Fact]
+public async Task AddReservationAsync_BlacklistedCustomer_ThrowsException()
+{
+    // Arrange
+    var customer = new Customer { Status = CustomerStatus.Blacklisted };
+    _customerRepo.Setup(r => r.GetByPhoneNumberAsync("123"))
+                .ReturnsAsync(customer);
+    
+    var model = new ReservationFormViewModel { CustomerPhone = "123" };
+
+    // Act & Assert
+    await Assert.ThrowsAsync<InvalidOperationException>(
+        () => _service.AddReservationAsync(model)
+    );
+}
+```
+
+### Running Tests
+```bash
+dotnet test
+```
 
 ---
 
@@ -199,42 +479,84 @@ Using the application after launching it:
 
 The project uses **Entity Framework Core** with a Code-First approach.
 
-Connection string is configured in `appsettings.json`:
+### Connection String
+Configured in `appsettings.json`:
 ```json
 "ConnectionStrings": {
-  "DefaultConnection": "Server=.;Database=RestaurantBookingDb;Trusted_Connection=True; Encrypt=False"
+  "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=RestaurantBookingSystem;Trusted_Connection=True;"
 }
 ```
 
-To create and seed the database:
+### Database Models
+
+**Reservation**
+- Links Customer and Table
+- Properties: Date, Time, NumberOfGuests, Notes
+- Foreign keys: CustomerId, TableId
+
+**Customer**
+- Properties: FullName, PhoneNumber (unique), Email, Status, Notes
+- Status enum: Regular (default), VIP, Blacklisted
+- One-to-many with Reservations
+
+**Table**
+- Properties: TableNumber (unique), Seats
+- One-to-many with Reservations
+
+**RestaurantSettings**
+- Singleton entity (one row)
+- Properties: RestaurantName, OpeningHour, ClosingHour
+
+**Event**
+- Properties: Name, Description, Date, ImageUrl, IsActive
+- Standalone entity
+
+### Entity Relationships
+```
+Customer 1 ────── * Reservation * ────── 1 Table
+RestaurantSettings (singleton)
+Event (standalone)
+```
+
+### Seeded Data
+
+**Roles & Users:**
+- Admin, Staff roles
+- admin@restaurant.com / Admin@123 (Admin role)
+- New users get Staff role automatically
+
+**Tables:**
+20 tables with capacities 2-20 seats
+
+**Customers:**
+20 sample customers connected to the 20 seeded reservation.
+
+**Reservations:**
+20 sample reservations across past, present, and future dates
+
+**Settings:**
+- Restaurant name: "Byte & Bite"
+- Operating hours: 10:00 - 23:00
+
+**Events:**
+4 active events with images (Pizza Day, Taco Fiesta Night, Ladies Night, Sushi & Chill)
+
+### Creating the Database
 ```bash
 dotnet ef migrations add InitialCreate
 dotnet ef database update
 ```
 
-### Database Models
-
-- **Reservation** - Date, Time, NumberOfGuests, Notes
-- **Customer** - FullName, PhoneNumber, Email
-- **Table** - TableNumber, Seats
-- **RestaurantSettings** - OpeningHour, ClosingHour
-
-### Seeded Data
-
-- 20 tables with capacities ranging from 2 to 20 seats
-- 10 sample customers (John Doe, Maria Ivanova, etc.)
-- 10 sample reservations in February 2026
-- Operating hours: 10:00 AM - 11:00 PM
-
 ---
 
 ## ⚙️ Configuration
 
+### Application Settings
 Key settings in `appsettings.json`:
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=.;Database=RestaurantBookingDb;Trusted_Connection=True; Encrypt=False"
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=RestaurantBookingSystem;Trusted_Connection=True;"
   },
   "Logging": {
     "LogLevel": {
@@ -245,18 +567,65 @@ Key settings in `appsettings.json`:
 }
 ```
 
-### Password Requirements
+### Identity Configuration
+Password requirements in `Program.cs`:
+- Minimum 6 characters
+- Requires uppercase letter
+- Requires lowercase letter
+- Requires digit
+- No special character required
 
-- Minimum 8 characters
-- At least one uppercase letter
-- At least one lowercase letter
-- At least one digit
+### Service Registration
+```csharp
+// Repository Pattern
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+// ... other repositories
+
+// Service Layer
+builder.Services.AddScoped<IReservationService, ReservationService>();
+// ... other services
+
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(ReservationProfile).Assembly);
+```
+
+---
+
+## 📸 Screenshots
+
+### Home Page
+*Dashboard with today's reservations and events carousel*
+![Home Page](Screenshots/home.png)
+
+### Create Reservation
+*Modern form with sectioned layout and validation*
+![Create Reservation](Screenshots/create-reservations.png)
+
+### Table Details
+*Table information with booking statistics*
+![Table Details](Screenshots/table-details.png)
+
+### Customer Details
+*Customer profile with reservation history*
+![Customer Details](Screenshots/customer-details.png)
+
+### Customer Search
+*Search functionality with VIP status badges*
+![Customers](Screenshots/customer-search.png)
+
+### Restaurant Settings
+*Admin settings with midnight closing support*
+![Settings](Screenshots/settings.png)
+
+### Admin Dropdown
+*Role-based menu showing admin-only options*
+![Admin Menu](Screenshots/home-admin.png)
 
 ---
 
 ## 📄 License
 
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+This project is for educational purposes as part of the **ASP.NET Advanced** course at SoftUni.
 
 ---
 
@@ -268,4 +637,4 @@ Project Link: [https://github.com/aysunuri/RestaurantBookingSystem](https://gith
 
 ---
 
-*Built as part of the **ASP.NET Fundamentals** course at SoftUni.*
+*Built as the final project for the **ASP.NET Advanced** course at SoftUni (February-April 2026)*
